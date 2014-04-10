@@ -1,5 +1,15 @@
 #!/usr/bin/python3
 
+import os
+import sys
+
+if "--gen-key" in sys.argv:
+    number = int(input("number of keys > "))
+    len = int(input("key len > "))
+    for i in range(number):
+        print (' '.join('{:02x}'.format(x) for x in os.urandom(len)))
+    exit()
+
 decryption = False
 
 def sxor(str1, str2): # use xor for bytes
@@ -27,7 +37,7 @@ except:
 
 result = str(sxor(text, validate_key(key, text))) # encrypt/decrypt the text
 
-if not decryption: encrypted result convert to hex format
+if not decryption: # encrypted result convert to hex format
     result = " ".join("{:02x}".format(ord(c)) for c in result)
 
 print (result)
