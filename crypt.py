@@ -2,10 +2,10 @@
 
 decryption = False
 
-def sxor(str1, str2): # use xor for strings
-    return ''.join(chr(ord(str1) ^ ord(str2)) for str1, str2 in zip(str1, str2))
+def sxor(str1, str2): # use xor for bytes
+    return ''.join(chr(str1 ^ str2) for str1, str2 in zip(str1, str2))
 
-def resize_key(key, text):
+def validate_key(key, text):
     if len(key) < len(text):
         print("the key must have the text length or be longer")
         exit()
@@ -13,19 +13,19 @@ def resize_key(key, text):
 
 text = input("enter the text > ")
 try:
-    text = bytes.fromhex(text).decode('utf-8').replace(" ", "")
+    text = bytes.fromhex(text.replace(" ", ""))
     decryption = True
 except:
-    pass
+    text = bytes(text, "utf-8")
 
 key = input("enter the key > ")
 try:
-    key = bytes.fromhex(key).decode('utf-8').replace(" ", "")
+    key = bytes.fromhex(key.replace(" ", ""))
 except:
     print ("the key must be in HEX format")
     exit()
 
-result = sxor(text, resize_key(key, text))
+result = str(sxor(text, validate_key(key, text)))
 
 if not decryption:
     result = " ".join("{:02x}".format(ord(c)) for c in result)
