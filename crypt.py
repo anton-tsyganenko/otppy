@@ -23,16 +23,31 @@
 import os
 import sys
 
-if "--no-spaces" in sys.argv:
+def nextarg(arg): # just for better readability
+    return sys.argv[sys.argv.index(arg) + 1]
+
+if "-o" in sys.argv: # output to a file
+    def out(output):
+        outFile = open(nextarg("-o"), "w")
+        print ("output redirected to " + nextarg("-o"))
+        outFile.write(output)
+        outFile.close()
+else:
+    def out(output): print(output)
+
+if "--no-spaces" in sys.argv: # remove spaces from encrypted data and generated keys if user doesn't need them.
     space = ""
 else:
     space = " "
 
-if "--gen-key" in sys.argv:
+if "--gen-key" in sys.argv: # function for keys generation
     number = int(input("number of keys > "))
     len = int(input("key len > "))
+    result = ""
     for i in range(number):
-        print (space.join('{:02x}'.format(x) for x in os.urandom(len)))
+        result += space.join('{:02x}'.format(x) for x in os.urandom(len))
+        result += "\n"
+    out(result)
     exit()
 
 decryption = False
@@ -65,4 +80,4 @@ result = str(sxor(text, validate_key(key, text))) # encrypt/decrypt the text
 if not decryption: # encrypted result convert to hex format
     result = space.join("{:02x}".format(ord(c)) for c in result)
 
-print (result)
+out(result)
