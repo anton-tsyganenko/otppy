@@ -13,14 +13,14 @@ def resize_key(key, text):
 
 text = input("enter the text > ")
 try:
-    text = bytes.fromhex(text).decode('utf-8')
+    text = bytes.fromhex(text).decode('utf-8').replace(" ", "")
     decryption = True
 except:
     pass
 
 key = input("enter the key > ")
 try:
-    key = bytes.fromhex(key).decode('utf-8')
+    key = bytes.fromhex(key).decode('utf-8').replace(" ", "")
 except:
     print ("the key must be in HEX format")
     exit()
@@ -28,6 +28,6 @@ except:
 result = sxor(text, resize_key(key, text))
 
 if not decryption:
-    result = "".join("{:02x}".format(ord(c)) for c in result)
+    result = " ".join("{:02x}".format(ord(c)) for c in result)
 
 print (result)
