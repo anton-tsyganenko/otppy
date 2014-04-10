@@ -20,7 +20,10 @@ except:
 
 key = input("enter the key > ")
 try:
-    key = bytes.fromhex(key)
+    key = bytes.fromhex(key).decode('utf-8')
+except:
+    print ("the key must be in HEX format")
+    exit()
 
 result = sxor(text, resize_key(key, text))
 
