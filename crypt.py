@@ -2,25 +2,26 @@
 
 decryption = False
 
-def sxor(str1, str2):
+def sxor(str1, str2): # use xor for strings
     return ''.join(chr(ord(str1) ^ ord(str2)) for str1, str2 in zip(str1, str2))
 
 def resize_key(key, text):
-    while True:
-      if len(text) > len(key):
-        key += key
-      else:
-        break
+    if len(key) < len(text):
+        print("the key must have the text length or be longer")
+        exit()
     return key
 
-text = input("введите текст > ")
+text = input("enter the text > ")
 try:
     text = bytes.fromhex(text).decode('utf-8')
     decryption = True
 except:
     pass
 
-key = input("введите ключ > ")
+key = input("enter the key > ")
+try:
+    key = bytes.fromhex(key)
+
 result = sxor(text, resize_key(key, text))
 
 if not decryption:
