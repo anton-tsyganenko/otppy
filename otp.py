@@ -72,16 +72,27 @@ def sxor(str1, str2): # use xor for bytes
 def validate_key(key, text): # don't let user to use small key
     if len(key) < len(text):
         print("the key must have the text length or be longer")
+        print(type(key), len(key), type(text), len(text))
         exit()
     return key
 
-text = input("enter the text > ") # input text, decide, if it's a encrypted text and convert to bytes
-if "--force-encrypt" not in sys.argv:
+if "-i" not in sys.argv:
+    text = input("enter the text > ") # input text, decide, if it's a encrypted text and convert to bytes
+else:
+    text = open(nextarg("-i"), "rb").read()
+
+if "-i" in sys.argv:
+    try:
+        text = bytes.fromhex(text.replace(" ", ""))
+    except:
+        text = bytes.fromhex(bytesToString(text))
+    decryption = True
+elif "--force-encrypt" not in sys.argv:
     try:
         text = bytes.fromhex(text.replace(" ", ""))
         decryption = True
     except:
-        text = bytes(text, "utf-8")
+        if "-i" not in sys.argv: text = bytes(text, "utf-8")
 else:
     text = bytes(text, "utf-8")
 
