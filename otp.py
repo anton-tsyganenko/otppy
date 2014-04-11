@@ -23,14 +23,19 @@
 import os
 import sys
 
-def toHex(value):
-    if type(value) == bytes:
-        result = ''
-        result += space.join('{:02x}'.format(x) for x in value)
-    if type(value) == str:
-        result = ''
-        result += space.join('{:02x}'.format(ord(x)) for x in value)
-    return result
+def bytesToString(bytes):
+    return "".join(chr(x) for x in bytes)
+
+def binOut(value):
+    result = ''
+    if "--bin" not in sys.argv:
+        if type(value) == bytes:
+            result += space.join('{:02x}'.format(x) for x in value)
+        if type(value) == str:
+            result += space.join('{:02x}'.format(ord(x)) for x in value)
+        return result
+    else:
+        return value
 
 def nextarg(arg): # just for better readability
     return sys.argv[sys.argv.index(arg) + 1]
@@ -54,7 +59,7 @@ if "--gen-key" in sys.argv: # function for keys generation
     len = int(input("key len > "))
     result = ""
     for i in range(number):
-        result += toHex(os.urandom(len))
+        result += binOut(bytesToString(os.urandom(len)))
         result += "\n"
     out(result)
     exit()
@@ -90,6 +95,6 @@ except:
 result = str(sxor(text, validate_key(key, text))) # encrypt/decrypt the text
 
 if not decryption: # encrypted result convert to hex format
-    result = toHex(result)
+    result = binOut(result)
 
 out(result)
