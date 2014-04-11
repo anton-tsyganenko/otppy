@@ -71,10 +71,13 @@ def validate_key(key, text): # don't let user to use small key
     return key
 
 text = input("enter the text > ") # input text, decide, if it's a encrypted text and convert to bytes
-try:
-    text = bytes.fromhex(text.replace(" ", ""))
-    decryption = True
-except:
+if "--force-encrypt" not in sys.argv:
+    try:
+        text = bytes.fromhex(text.replace(" ", ""))
+        decryption = True
+    except:
+        text = bytes(text, "utf-8")
+else:
     text = bytes(text, "utf-8")
 
 key = input("enter the key > ") # input key, check, if it's hex
