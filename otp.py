@@ -23,6 +23,15 @@
 import os
 import sys
 
+def toHex(value):
+    if type(value) == bytes:
+        result = ''
+        result += space.join('{:02x}'.format(x) for x in value)
+    if type(value) == str:
+        result = ''
+        result += space.join('{:02x}'.format(ord(x)) for x in value)
+    return result
+
 def nextarg(arg): # just for better readability
     return sys.argv[sys.argv.index(arg) + 1]
 
@@ -45,7 +54,7 @@ if "--gen-key" in sys.argv: # function for keys generation
     len = int(input("key len > "))
     result = ""
     for i in range(number):
-        result += space.join('{:02x}'.format(x) for x in os.urandom(len))
+        result += toHex(os.urandom(len))
         result += "\n"
     out(result)
     exit()
@@ -78,6 +87,6 @@ except:
 result = str(sxor(text, validate_key(key, text))) # encrypt/decrypt the text
 
 if not decryption: # encrypted result convert to hex format
-    result = space.join("{:02x}".format(ord(c)) for c in result)
+    result = toHex(result)
 
 out(result)
