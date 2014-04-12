@@ -118,10 +118,11 @@ if filein:
 else:
     text = bytes(input("enter the text > "), "utf-8")
 
-if not binmode:
-    text = text.replace(b" ", b"")
-    text = bytes.fromhex(text.decode("utf-8"))
+try:
+    text = bytes.fromhex(text.replace(b" ", b"").decode("utf-8"))
     decryption = True
+except:
+    pass
 
 
 ################# key input
