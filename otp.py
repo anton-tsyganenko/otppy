@@ -55,7 +55,7 @@ if "--no-spaces" in sys.argv:
 else:
     space = " "
 
-
+decryption = False
 
 
 ###############FUNCTIONS
@@ -109,8 +109,6 @@ if genkey: # function for keys generation
 
 ############/ revork it
 
-decryption = False
-
 
 ################# text input
 
@@ -118,13 +116,12 @@ if filein:
     with open(nextarg("-i"), "rb") as file:
         text = file.read()
 else:
-    text = input("enter the text > ")
-    try:
-        text = bytes.fromhex(text.replace(" ", ""))
-        decryption = True
-    except:
-        text = bytes(text, "utf-8")
+    text = bytes(input("enter the text > "), "utf-8")
 
+if not binmode:
+    text = text.replace(b" ", b"")
+    text = bytes.fromhex(text.decode("utf-8"))
+    decryption = True
 
 
 ################# key input
