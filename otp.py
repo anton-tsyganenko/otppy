@@ -100,10 +100,10 @@ def out(output):
 if genkey: # function for keys generation
     number = int(input("number of keys > "))
     len = int(input("key len > "))
-    result = ""
+    result = b""
     for i in range(number):
         result += binOut(os.urandom(len))
-        result += "\n"
+        result += b"\n"
     out(result)
     exit()
 
