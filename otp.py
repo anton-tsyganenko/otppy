@@ -25,9 +25,7 @@ import sys
 
 
 
-
-
-#######--params
+################ OPTIONS
 
 fileout = False
 filein = False
@@ -58,7 +56,8 @@ else:
 decryption = False
 
 
-###############FUNCTIONS
+
+################ FUNCTIONS
 
 def bytesToString(bytes):
     return "".join(chr(x) for x in bytes)
@@ -75,7 +74,6 @@ def bxor(b1, b2): # use xor for bytes
 def validate_key(key, text): # don't let user to use small key
     if len(key) < len(text):
         print("the key must have the text length or be longer")
-#        print(type(key), len(key), type(text), len(text))
         exit()
     return key
 
@@ -94,8 +92,9 @@ def out(output):
     else:
         print(bytesToString(output))
 
-############ rework it
 
+
+################ KEY GENERATION
 
 if genkey: # function for keys generation
     number = int(input("number of keys > "))
@@ -107,10 +106,9 @@ if genkey: # function for keys generation
     out(result)
     exit()
 
-############/ revork it
 
 
-################# text input
+################ TEXT INPUT
 
 if filein:
     with open(nextarg("-i"), "rb") as file:
@@ -125,7 +123,8 @@ except:
     pass
 
 
-################# key input
+
+################ KEY INPUT
 
 if keyfile:
     with open(nextarg("-ki"), "rb") as file:
@@ -135,13 +134,15 @@ else:
 
 
 
+################ ENCRYPTION/DECRYPTION
 
-result = bxor(text, validate_key(key, text)) # encrypt/decrypt the text
+result = bxor(text, validate_key(key, text))
+
+
+
+################ FINAL
 
 if not decryption: # encrypted result convert to hex format
     result = binOut(result)
 
-
 out(result)
-
-
