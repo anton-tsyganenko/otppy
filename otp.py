@@ -79,9 +79,7 @@ def validate_key(key, text): # don't let user to use short key
 
 def binOut(data):
     if not binmode:
-        result = b""
-        result += bytes(space.join('{:02x}'.format(x) for x in data), "utf-8")
-        return result
+        return bytes(space.join('{:02x}'.format(x) for x in data), "utf-8")
     else:
         return data
 
