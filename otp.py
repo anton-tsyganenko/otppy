@@ -71,7 +71,7 @@ def bxor(b1, b2): # use xor for bytes
         result += bytes([b1 ^ b2])
     return result
 
-def validate_key(key, text): # don't let user to use small key
+def validate_key(key, text): # don't let user to use short key
     if len(key) < len(text):
         print("the key must have the text length or be longer")
         exit()
@@ -98,7 +98,7 @@ def out(output):
 
 if genkey: # function for keys generation
     number = int(input("number of keys > "))
-    len = int(input("key len > "))
+    len = int(input("key length > "))
     result = b""
     for i in range(number):
         result += binOut(os.urandom(len))
