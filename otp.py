@@ -112,7 +112,9 @@ if filein:
     with open(nextarg("-i"), "rb") as file:
         text = file.read()
 else:
-    text = bytes(input("enter the text > "), "utf-8")
+    print("enter the text, then press ENTER; CTRL+D")
+    text = sys.stdin.read()[:-1]
+    text = bytes(text, "utf-8")
 
 try:
     text = bytes.fromhex(text.replace(b" ", b"").decode("utf-8"))
