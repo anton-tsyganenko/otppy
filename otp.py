@@ -96,12 +96,23 @@ def out(output):
 
 if genkey: # function for keys generation
     number = int(input("number of keys > "))
-    len = int(input("key length > "))
-    result = b""
-    for i in range(number):
-        result += binOut(os.urandom(len))
-        result += b"\n"
-    out(result)
+    length = int(input("key length > "))
+    if not binmode:
+        result = b""
+        for i in range(number):
+            result += binOut(os.urandom(length))
+            result += b"\n" 
+        out(result)
+    else:
+        keyfolder = nextarg("--gen-key")
+        try:
+            os.mkdir(keyfolder)
+        except:
+            pass
+        for i in range(number):
+            with open(keyfolder + os.sep + str(i), 'xb') as file:
+                file.write(os.urandom(length))
+
     exit()
 
 
