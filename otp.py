@@ -104,7 +104,7 @@ if genkey: # function for keys generation
             result += b"\n" 
         out(result)
     else:
-        keyfolder = nextarg("--gen-key")
+        keyfolder = nextarg("-o")
         try:
             os.mkdir(keyfolder)
         except:
@@ -138,15 +138,11 @@ except:
 ################ KEY INPUT
 
 if keyfromfile:
-#    if not binmode:
-#        with open(nextarg("-ki"), "rb") as file:
-#            key = file.read()
-#    else:
-        keyfolder = nextarg("-ki")
-        keyfile = keyfolder + os.sep + max(os.listdir(keyfolder))
-        with open(keyfile, 'br') as f:
-            key = f.read()
-        os.remove(keyfile)
+    keyfolder = nextarg("-ki")
+    keyfile = keyfolder + os.sep + max(os.listdir(keyfolder))
+    with open(keyfile, 'br') as f:
+        key = f.read()
+    os.remove(keyfile)
 
 else:
     key = bytes.fromhex(input("enter the key > ").replace(" ", ""))
