@@ -29,7 +29,7 @@ import sys
 
 fileout = False
 filein = False
-keyfile = False
+keyfromfile = False
 binmode = False
 genkey = False
 
@@ -40,7 +40,7 @@ if "-i" in sys.argv:
     filein = True
 
 if "-ki" in sys.argv:
-    keyfile = True
+    keyfromfile = True
 
 if "--bin" in sys.argv:
     binmode = True
@@ -110,8 +110,8 @@ if genkey: # function for keys generation
         except:
             pass
         for i in range(number):
-            with open(keyfolder + os.sep + str(i), 'xb') as file:
-                file.write(os.urandom(length))
+            with open(keyfolder + os.sep + str(i), 'xb') as f:
+                f.write(os.urandom(length))
 
     exit()
 
@@ -137,9 +137,17 @@ except:
 
 ################ KEY INPUT
 
-if keyfile:
-    with open(nextarg("-ki"), "rb") as file:
-        key = file.read()
+if keyfromfile:
+#    if not binmode:
+#        with open(nextarg("-ki"), "rb") as file:
+#            key = file.read()
+#    else:
+        keyfolder = nextarg("-ki")
+        keyfile = keyfolder + os.sep + max(os.listdir(keyfolder))
+        with open(keyfile, 'br') as f:
+            key = f.read()
+        os.remove(keyfile)
+
 else:
     key = bytes.fromhex(input("enter the key > ").replace(" ", ""))
 
