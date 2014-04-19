@@ -98,16 +98,15 @@ def out(output):
 
 ################ KEY GENERATION
 
-if genkey: # function for keys generation
+if genkey:
     number = int(input("number of keys > "))
     length = int(input("key length > "))
-    if not binmode:
+    if not binmode: # text with keys in hex format
         result = b""
         for i in range(number):
-            result += binOut(os.urandom(length))
-            result += b"\n" 
+            result += binOut(os.urandom(length)) + b"\n"
         out(result)
-    else:
+    else: # folder with binary key files
         keyfolder = nextarg("-o")
         try:
             os.mkdir(keyfolder)
@@ -123,15 +122,15 @@ if genkey: # function for keys generation
 
 ################ TEXT INPUT
 
-if filein:
+if filein: # from a file
     with open(nextarg("-i"), "rb") as file:
         text = file.read()
-else:
+else: # direct input
     print("enter the text, then press ENTER; CTRL+D")
     text = sys.stdin.read()[:-1]
     text = bytes(text, "utf-8")
 
-try:
+try: # try to decode hex
     text = bytes.fromhex(text.replace(b" ", b"").decode("utf-8"))
     decryption = True
 except:
@@ -141,7 +140,7 @@ except:
 
 ################ KEY INPUT
 
-if keyfromfile:
+if keyfromfile: # use folder with keys
     keyfolder = nextarg("-ki")
     keyfile = keyfolder + os.sep + max(os.listdir(keyfolder))
     with open(keyfile, 'br') as f:
@@ -149,7 +148,7 @@ if keyfromfile:
     if deletekey:
         os.remove(keyfile)
 
-else:
+else: # manually input the key
     key = bytes.fromhex(input("enter the key > ").replace(" ", ""))
 
 
@@ -165,7 +164,7 @@ result = bxor(text, validate_key(key, text))
 if not decryption: # encrypted result convert to hex format
     result = binOut(result)
 
-if not fileout and not (filein and keyfromfile):
+if not fileout and not (filein and keyfromfile): # separator
     print("################\n")
 
 out(result)
