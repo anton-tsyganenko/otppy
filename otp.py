@@ -165,4 +165,7 @@ result = bxor(text, validate_key(key, text))
 if not decryption: # encrypted result convert to hex format
     result = binOut(result)
 
+if not fileout and not (filein and keyfromfile):
+    print("################\n")
+
 out(result)
