@@ -137,8 +137,9 @@ else: # direct input
 if imode in ["auto", "hex"]:
     try: # try to decode hex
         text = bytes.fromhex(text.replace(b" ", b"").decode("utf-8"))
-    except:
         omode = "bin"
+    except:
+        omode = "hex"
 
 
 
