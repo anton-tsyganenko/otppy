@@ -32,6 +32,7 @@ filein = False
 keyfromfile = False
 binmode = False
 genkey = False
+deletekey = True
 
 if "-o" in sys.argv:
     fileout = True
@@ -47,6 +48,9 @@ if "--bin" in sys.argv:
 
 if "--gen-key" in sys.argv:
     genkey = True
+
+if "--do-not-delete-key" in sys.argv:
+    deletekey = False
 
 if "--no-spaces" in sys.argv:
     space = ""
@@ -142,7 +146,8 @@ if keyfromfile:
     keyfile = keyfolder + os.sep + max(os.listdir(keyfolder))
     with open(keyfile, 'br') as f:
         key = f.read()
-    os.remove(keyfile)
+    if deletekey:
+        os.remove(keyfile)
 
 else:
     key = bytes.fromhex(input("enter the key > ").replace(" ", ""))
