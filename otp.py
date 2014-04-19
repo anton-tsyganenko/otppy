@@ -24,43 +24,6 @@ import os
 import sys
 
 
-
-################ OPTIONS
-
-fileout = False
-filein = False
-keyfromfile = False
-binmode = False
-genkey = False
-deletekey = True
-
-if "-o" in sys.argv:
-    fileout = True
-
-if "-i" in sys.argv:
-    filein = True
-
-if "-ki" in sys.argv:
-    keyfromfile = True
-
-if "--bin" in sys.argv:
-    binmode = True
-
-if "--gen-key" in sys.argv:
-    genkey = True
-
-if "--do-not-delete-key" in sys.argv:
-    deletekey = False
-
-if "--no-spaces" in sys.argv:
-    space = ""
-else:
-    space = " "
-
-decryption = False
-
-
-
 ################ FUNCTIONS
 
 def bytesToString(bytes):
@@ -82,7 +45,7 @@ def validate_key(key, text): # don't let user to use short key
     return key
 
 def binOut(data):
-    if not binmode:
+    if mode != "bin":
         return bytes(space.join('{:02x}'.format(x) for x in data), "utf-8")
     else:
         return data
@@ -96,12 +59,53 @@ def out(output):
 
 
 
+
+################ OPTIONS
+
+fileout = False
+filein = False
+keyfromfile = False
+imode = "auto"
+omode = "hex"
+genkey = False
+deletekey = True
+
+if "-o" in sys.argv:
+    fileout = True
+
+if "-i" in sys.argv:
+    filein = True
+
+if "-ki" in sys.argv:
+    keyfromfile = True
+
+if "--imode" in sys.argv:
+    imode = nextarg("--imode")
+
+if "--omode" in sys.argv:
+    omode = nextarg("--omode")
+
+if "--gen-key" in sys.argv:
+    genkey = True
+
+if "--do-not-delete-key" in sys.argv:
+    deletekey = False
+
+if "--no-spaces" in sys.argv:
+    space = ""
+else:
+    space = " "
+
+decryption = False
+
+
+
 ################ KEY GENERATION
 
 if genkey:
     number = int(input("number of keys > "))
     length = int(input("key length > "))
-    if not binmode: # text with keys in hex format
+    if omode != "bin": # text with keys in hex format
         result = b""
         for i in range(number):
             result += binOut(os.urandom(length)) + b"\n"
@@ -130,11 +134,11 @@ else: # direct input
     text = sys.stdin.read()[:-1]
     text = bytes(text, "utf-8")
 
-try: # try to decode hex
-    text = bytes.fromhex(text.replace(b" ", b"").decode("utf-8"))
-    decryption = True
-except:
-    pass
+if imode in ["auto", "hex"]:
+    try: # try to decode hex
+        text = bytes.fromhex(text.replace(b" ", b"").decode("utf-8"))
+    except:
+        omode = "bin"
 
 
 
@@ -161,7 +165,7 @@ result = bxor(text, validate_key(key, text))
 
 ################ FINAL
 
-if not decryption: # encrypted result convert to hex format
+if omode == "hex": # encrypted result convert to hex format
     result = binOut(result)
 
 if not fileout and not (filein and keyfromfile): # separator
