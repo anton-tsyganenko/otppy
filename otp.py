@@ -66,7 +66,7 @@ fileout = False
 filein = False
 keyfromfile = False
 imode = "auto"
-omode = "hex"
+omode = "auto"
 genkey = False
 deletekey = True
 
@@ -137,7 +137,8 @@ else: # direct input
 if imode in ["auto", "hex"]:
     try: # try to decode hex
         text = bytes.fromhex(text.replace(b" ", b"").decode("utf-8"))
-        omode = "bin"
+        if omode == "auto":
+            omode = "bin"
     except:
         omode = "hex"
 
@@ -166,7 +167,7 @@ result = bxor(text, validate_key(key, text))
 
 ################ FINAL
 
-if omode == "hex": # encrypted result convert to hex format
+if omode in ["hex", "auto"]: # encrypted result convert to hex format
     result = binOut(result)
 
 if not fileout and not (filein and keyfromfile): # separator
