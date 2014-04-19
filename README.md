@@ -28,5 +28,6 @@ one-time pad, written with python
 * Do not encrypt large files. Feel free to encrypt small files (about a few KB), encryption of bigger files (a few MB) will take longer, encryption of big files (more than 100 MB) will be **very** long. **Make sure that the total size of the file and the key is lesser than free RAM**
 * The program can be used if you have 2 channels, each of those can be wiretapped. In this case you should send keys using one channel and messages using another one. To decrypt messages both channels must be wiretapped by the same person.
 * The secure of the crypt depends on the way of keys transmission. It's recommended to transmit keys on a face-to-face meeting using a flash storage or a CD. Also you can encrypt keys using truecrypt, encrypted zip, etc.
+* Note, that some symbols, like cyrillic letters, can use more than 1 byte for each symbol.
 * You can get more information about the one-time notepad crypt [on wikipedia](http://en.wikipedia.org/wiki/One-time_pad)
 * If you find a bug, have some questions or want to make a suggestion, feel free to contact me using [email](mailto:anton-tsyganenko@yandex.ru) or [jabber](xmpp:antontsyganenko@jabber.ru).
