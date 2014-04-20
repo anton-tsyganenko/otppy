@@ -130,6 +130,11 @@ if genkey:
 if filein: # from a file
     with open(nextarg("-i"), "rb") as file:
         text = file.read()
+    if omode == "auto":
+        omode = "bin"
+    if imode == "auto":
+        imode = "bin"
+
 else: # direct input
     print("enter the text, then press ENTER; CTRL+D")
     text = sys.stdin.read()[:-1]
