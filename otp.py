@@ -158,8 +158,6 @@ if keyfromfile: # use folder with keys
     keyfile = keyfolder + os.sep + max(fileslist)
     with open(keyfile, 'br') as f:
         key = f.read()
-    if deletekey:
-        os.remove(keyfile)
 
 else: # manually input the key
     key = bytes.fromhex(input("enter the key > ").replace(" ", ""))
@@ -181,3 +179,6 @@ if not fileout and not (filein and keyfromfile): # separator
     print("================\n")
 
 out(result)
+
+if deletekey and keyfromfile: # delete the key if evrything is ok
+    os.remove(keyfile)
