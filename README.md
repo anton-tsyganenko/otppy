@@ -6,8 +6,8 @@ one-time pad, written with python
 ##options
 
 `-o file` - redirect output to a file  
-`-i flie` - take the data from the file  
-`-ki folder` - take the key from the folder  
+`-i flie` - get a data from a file  
+`-ki folder` - get a key from a folder  
 `--imode mode` - input mode (can be hex or bin)  
 `--omode mode` - output mode (can be hex or bin)  
 `--gen-key` - generate keys  
@@ -21,6 +21,33 @@ one-time pad, written with python
 3. To encrypt a message use the `./otp.py -ki keys_folder` command. Enter your message, then press enter and then ctrl+d. Send the result to your recipient.
 4. To decrypt the message, use the same command (`./otp.py -ki keys_folder`). Enter the encrypted text, press enter and ctrl+d.
 5. Be careful to not over keys. The number of keys is equal to the number of files in your keys folder. When your keys are over, repeat 1 and 2 steps.
+
+##examples
+
+generation of a folder with keys:
+
+    ./otp.py --gen-key --omode bin -o keys
+
+encryption/decryption with manual text and key input:
+
+    ./otp.py
+
+encryption/decryption with manual text input and getting a key from a folder:
+
+    ./otp.py -ki keys
+
+file encryption with getting a key from a folder:
+
+    ./otp.py -ki keys -i file.in -o file.out
+
+if you need to get a text from a hex code, use the `./otp.py --imode hex --omode bin` command. Use zeros as a key:
+
+    enter the text, then press ENTER; CTRL+D
+    68 65 6c 6c 6f 2c 20 70 79 74 68 6f 6e
+    enter the key > 00 00 00 00 00 00 00 00 00 00 00 00 00
+    ================
+
+    hello, python
 
 ##also
 
