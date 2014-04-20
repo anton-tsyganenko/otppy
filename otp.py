@@ -159,7 +159,7 @@ if keyfromfile: # use folder with keys
         print ("================\nNO KEYS IN {kf}!".format(kf = keyfolder))
         exit()
     if len(fileslist) <= notenoughkeys:
-        print ("================\nWARNING! only {k} keys left!".format(k = len(fileslist)))
+        print ("================\nWARNING! only {k} keys left, and one of them will be used now.".format(k = len(fileslist)-1 ))
     keyfile = keyfolder + os.sep + max(fileslist)
     with open(keyfile, 'br') as f:
         key = f.read()
