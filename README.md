@@ -16,7 +16,7 @@ one-time pad, written with python
 
 ##getting started
 
-1. Generate a folder with keys using the `./otp.py --gen-key -o keys_folder --omode bin` command. The program will ask you the number of keys, that is equal to the number of messages and keys length, that is equal to the maximum length of each message. Do not make them too small or too big. It's recommended to generate 100-10000 keys with a 100-10000 bytes size according to the situation.
+1. Generate a folder with keys using the `./otp.py --gen-key -o keys_folder` command. The program will ask you the number of keys, that is equal to the number of messages and keys length, that is equal to the maximum length of each message. Do not make them too small or too big. It's recommended to generate 100-10000 keys with a 100-10000 bytes size according to the situation.
 2. Send the folder to your recipient using a **secure** channel. You can zip the folder without a compression.
 3. To encrypt a message use the `./otp.py -ki keys_folder` command. Enter your message, then press enter and then ctrl+d. Send the result to your recipient.
 4. To decrypt the message, use the same command (`./otp.py -ki keys_folder`). Enter the encrypted text, press enter and ctrl+d.
@@ -26,7 +26,7 @@ one-time pad, written with python
 
 generation of a folder with keys:
 
-    ./otp.py --gen-key --omode bin -o keys
+    ./otp.py --gen-key -o keys
 
 encryption/decryption with manual text and key input:
 

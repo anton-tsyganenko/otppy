@@ -106,11 +106,13 @@ decryption = False
 if genkey:
     number = int(input("number of keys > "))
     length = int(input("key length > "))
-    if omode != "bin": # text with keys in hex format
+
+    if omode == "hex": # text with keys in hex format
         result = b""
         for i in range(number):
             result += binOut(os.urandom(length)) + b"\n"
         out(result)
+
     else: # folder with binary key files
         keyfolder = nextarg("-o")
         try:
