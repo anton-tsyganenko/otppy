@@ -69,6 +69,7 @@ imode = "auto"
 omode = "auto"
 genkey = False
 deletekey = True
+notenoughkeys = 5
 
 if "-o" in sys.argv:
     fileout = True
@@ -148,7 +149,13 @@ if imode in ["auto", "hex"]:
 
 if keyfromfile: # use folder with keys
     keyfolder = nextarg("-ki")
-    keyfile = keyfolder + os.sep + max(os.listdir(keyfolder))
+    fileslist = os.listdir(keyfolder)
+    if len(fileslist) == 0:
+        print ("================\nNO KEYS IN {kf}!".format(kf = keyfolder))
+        exit()
+    if len(fileslist) <= notenoughkeys:
+        print ("================\nWARNING! only {k} keys left!".format(k = len(fileslist)))
+    keyfile = keyfolder + os.sep + max(fileslist)
     with open(keyfile, 'br') as f:
         key = f.read()
     if deletekey:
@@ -171,6 +178,6 @@ if omode in ["hex", "auto"]: # encrypted result convert to hex format
     result = binOut(result)
 
 if not fileout and not (filein and keyfromfile): # separator
-    print("################\n")
+    print("================\n")
 
 out(result)
