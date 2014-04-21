@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 
 # Copyright (c) 2014 Anton Tsyganenko
 #
@@ -157,11 +157,13 @@ if imode in ["auto", "hex"]:
 if keyfromfile: # use folder with keys
     keyfolder = nextarg("-ki")
     fileslist = os.listdir(keyfolder)
+
     if len(fileslist) == 0:
-        print ("================\nNO KEYS IN {kf}!".format(kf = keyfolder))
+        print("================\nNO KEYS IN {kf}!".format(kf = keyfolder))
         exit()
     if len(fileslist) <= notenoughkeys:
-        print ("================\nWARNING! only {k} keys left, and one of them will be used now.".format(k = len(fileslist)-1 ))
+        print("================\nWARNING! only {k} keys left, and one of them will be used now.".format(k = len(fileslist)))
+
     keyfile = keyfolder + os.sep + max(fileslist)
     with open(keyfile, 'br') as f:
         key = f.read()
