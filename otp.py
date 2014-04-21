@@ -46,7 +46,8 @@ def validate_key(key, text): # don't let user to use short key
 
 def binOut(data):
     if omode != "bin":
-        return bytes(space.join('{:02x}'.format(x) for x in data), "utf-8")
+        return bytes(space.join('{:02x}'.format(x) for x in data), \
+                     "utf-8")
     else:
         return data
 
@@ -120,7 +121,7 @@ if genkey:
         except:
             pass
         for i in range(number):
-            with open(keyfolder + os.sep + str(i), 'xb') as f:
+            with open(keyfolder + os.sep + str(i), "xb") as f:
                 f.write(os.urandom(length))
 
     exit()
@@ -159,10 +160,13 @@ if keyfromfile: # use folder with keys
     fileslist = os.listdir(keyfolder)
 
     if len(fileslist) == 0:
-        print("================\nNO KEYS IN {kf}!".format(kf = keyfolder))
+        print("================\n" +
+              "NO KEYS IN {kf}!".format(kf=keyfolder))
         exit()
     if len(fileslist) <= notenoughkeys:
-        print("================\nWARNING! only {k} keys left, and one of them will be used now.".format(k = len(fileslist)))
+        print("================\n" +
+            "WARNING! only {k} keys left, ".format(k=len(fileslist)) +
+            "and one of them will be used now.")
 
     keyfile = keyfolder + os.sep + max(fileslist)
     with open(keyfile, 'br') as f:
