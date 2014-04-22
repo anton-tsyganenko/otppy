@@ -38,14 +38,11 @@ def bxor(b1, b2): # use xor for bytes
         result += bytes([b1 ^ b2])
     return result
 
-def validate_key(key, text): # don't let user to use short key
-    if len(key) < len(text):
-        print("the key must have the text length or be longer")
-        exit()
-    return key
+def validate_key(key, text): # check, if user wants to use too short key
+    return len(key) >= len(text)
 
 def binOut(data):
-    if omode != "bin":
+    if omode != "bin": # converting binary data to hex code
         return bytes(space.join('{:02x}'.format(x) for x in data), \
                      "utf-8")
     else:
@@ -63,14 +60,14 @@ def out(output):
 
 ################ OPTIONS
 
-fileout = False
-filein = False
-keyfromfile = False
-imode = "auto"
-omode = "auto"
-genkey = False
-deletekey = True
-notenoughkeys = 5
+fileout = False         # output to a file
+filein = False          # get data from a file
+keyfromfile = False     # use key from a folder
+imode = "auto"          # input mode
+omode = "auto"          # output mode
+genkey = False          # generate keys
+deletekey = True        # detele used key
+notenoughkeys = 5       # print warning if user have small number of keys
 
 if "-o" in sys.argv:
     fileout = True
@@ -108,7 +105,7 @@ if genkey:
     number = int(input("number of keys > "))
     length = int(input("key length > "))
 
-    if omode == "hex": # text with keys in hex format
+    if omode == "hex" or not fileout: # text with keys in hex format
         result = b""
         for i in range(number):
             result += binOut(os.urandom(length)) + b"\n"
@@ -176,10 +173,15 @@ else: # manually input the key
     key = bytes.fromhex(input("enter the key > ").replace(" ", ""))
 
 
+################ DON'T LET USER TO USE TOO SHORT KEY
+
+if not validate_key(key, text):
+    print("the key must have the text length or be longer")
+    exit()
 
 ################ ENCRYPTION/DECRYPTION
 
-result = bxor(text, validate_key(key, text))
+result = bxor(text, key)
 
 
 
