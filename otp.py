@@ -26,9 +26,6 @@ import sys
 
 ################ FUNCTIONS
 
-def bytesToString(bytes):
-    return "".join(chr(x) for x in bytes)
-
 def nextarg(arg): # just for better readability
     return sys.argv[sys.argv.index(arg) + 1]
 
@@ -53,7 +50,7 @@ def out(output):
         with open(nextarg("-o"), "bw") as outFile:
             outFile.write(output)
     else:
-        print(bytesToString(output))
+        print(output.decode("utf-8"))
 
 
 
@@ -136,17 +133,16 @@ if filein: # from a file
         imode = "bin"
 
 else: # direct input
-    print("enter the text, then press ENTER; CTRL+D")
-    text = sys.stdin.read()[:-1]
+    text = input("enter the text > ")
     text = bytes(text, "utf-8")
 
 if imode in ["auto", "hex"]:
     try: # try to decode hex
         text = bytes.fromhex(text.replace(b" ", b"").decode("utf-8"))
-        if omode == "auto":
+        if omode == "auto": # if user inputs hex code, probably he wants to get a text
             omode = "bin"
     except:
-        omode = "hex"
+        omode = "hex" # if user inputs not hex code, probably he wants to get a hex code
 
 
 
@@ -160,6 +156,7 @@ if keyfromfile: # use folder with keys
         print("================\n" +
               "NO KEYS IN {kf}!".format(kf=keyfolder))
         exit()
+
     if len(fileslist) <= notenoughkeys:
         print("================\n" +
             "WARNING! only {k} keys left, ".format(k=len(fileslist)) +
