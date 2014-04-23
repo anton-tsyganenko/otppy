@@ -88,8 +88,6 @@ if "--no-spaces" in sys.argv:
 else:
     space = " "
 
-decryption = False
-
 
 
 ################ KEY GENERATION
