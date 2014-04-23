@@ -35,15 +35,11 @@ def bxor(b1, b2): # use xor for bytes
         result += bytes([b1 ^ b2])
     return result
 
-def validate_key(key, text): # check, if user wants to use too short key
+def validate_key(key, text): # check, if the key is too short
     return len(key) >= len(text)
 
-def binOut(data):
-    if omode != "bin": # converting binary data to hex code
-        return bytes(space.join('{:02x}'.format(x) for x in data), \
-                     "utf-8")
-    else:
-        return data
+def toHex(data): # convert binary data to hex code
+    return bytes(space.join('{:02x}'.format(x) for x in data), "utf-8")
 
 def out(output):
     if fileout: # output to a file
@@ -64,7 +60,7 @@ imode = "auto"          # input mode
 omode = "auto"          # output mode
 genkey = False          # generate keys
 deletekey = True        # detele used key
-notenoughkeys = 5       # print warning if user have small number of keys
+notenoughkeys = 5       # for warning (see line 156)
 
 if "-o" in sys.argv:
     fileout = True
@@ -105,7 +101,7 @@ if genkey:
     if omode == "hex" or not fileout: # text with keys in hex format
         result = b""
         for i in range(number):
-            result += binOut(os.urandom(length)) + b"\n"
+            result += toHex(os.urandom(length)) + b"\n"
         out(result)
 
     else: # folder with binary key files
@@ -129,7 +125,7 @@ if filein: # from a file
         text = file.read()
     if omode == "auto":
         omode = "bin"
-    if imode == "auto":
+    if imode == "auto": # not a mistake, look at first letters
         imode = "bin"
 
 else: # direct input
@@ -139,10 +135,10 @@ else: # direct input
 if imode in ["auto", "hex"]:
     try: # try to decode hex
         text = bytes.fromhex(text.replace(b" ", b"").decode("utf-8"))
-        if omode == "auto": # if user inputs hex code, probably he wants to get a text
-            omode = "bin"
-    except:
-        omode = "hex" # if user inputs not hex code, probably he wants to get a hex code
+        if omode == "auto": # if user inputs hex code,
+            omode = "bin"   # probably he wants to get a text
+    except:           # if user inputs not hex code,
+        omode = "hex" # probably he wants to get a hex code
 
 
 
@@ -185,7 +181,7 @@ result = bxor(text, key)
 ################ FINAL
 
 if omode in ["hex", "auto"]: # encrypted result convert to hex format
-    result = binOut(result)
+    result = toHex(result)
 
 if not fileout and not (filein and keyfromfile): # separator
     print("================\n")
