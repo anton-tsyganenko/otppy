@@ -54,7 +54,7 @@ if you need to decode hex code into text, use the `./otp.py --imode hex --omode 
 * Used keys are being deleted. Use the `--do-not-delete-key` option to prevent key deletion.
 * Do not encrypt large files. Feel free to encrypt small files (about a few KB), encryption of bigger files (a few MB) will take longer, encryption of big files (more than 100 MB) will be **very** long. **Make sure that the total size of the file and the key is less than free RAM**
 * The program can be used if you have 2 channels, whick both can be wiretapped. In this case you should send the keys set using one channel and messages using another one. To decrypt messages, both channels must be wiretapped.
-* The security of the cipher depends on the way of keys transmission. It's recommended to transmit keys on a face-to-face meeting using a flash storage or a CD. Also you can encrypt keys using truecrypt, encrypted zip, etc.
+* The security of the cipher depends on the way of keys transmission. It's recommended to transmit keys on a face-to-face, meeting using a flash storage or a CD. Also you can encrypt keys using truecrypt, encrypted zip, etc.
 * Note, that some symbols, like cyrillic letters, can use more than 1 byte for each symbol.
 * You can get more information about the one-time notepad cipher [on wikipedia](http://en.wikipedia.org/wiki/One-time_pad)
 * Should you detect a bug, have some questions or want to make a suggestion, feel free to contact me using [email](mailto:anton-tsyganenko@yandex.ru) or [jabber](xmpp:antontsyganenko@jabber.ru).
