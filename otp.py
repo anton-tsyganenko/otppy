@@ -58,7 +58,7 @@ keyfromfile = False     # use key from a folder
 imode = "auto"          # input mode
 omode = "auto"          # output mode
 genkey = False          # generate keys
-deletekey = True        # detele used key
+keyaction = "rename"    # detele used key
 notenoughkeys = 5       # for warning (see KEY INPUT)
 
 if "-o" in sys.argv:
@@ -70,6 +70,9 @@ if "-i" in sys.argv:
 if "-ki" in sys.argv:
     keyfromfile = True
 
+if "--key-action" in sys.argv:
+    keyaction = nextarg("--key-action")
+
 if "--imode" in sys.argv:
     imode = nextarg("--imode")
 
@@ -78,9 +81,6 @@ if "--omode" in sys.argv:
 
 if "--gen-key" in sys.argv:
     genkey = True
-
-if "--do-not-delete-key" in sys.argv:
-    deletekey = False
 
 if "--no-spaces" in sys.argv:
     space = ""
@@ -145,6 +145,16 @@ if keyfromfile: # use folder with keys
     keyfolder = nextarg("-ki")
     fileslist = os.listdir(keyfolder)
 
+    newfl = fileslist.copy() # newlf is just for not modifying list,
+                             # using in a loop
+
+    for i in fileslist: # don't use used keys
+        if "_used" in i:
+            newfl.remove(i)
+
+    fileslist = newfl
+    del newfl
+
     if len(fileslist) == 0:
         print("================\n" +
               "NO KEYS IN {kf}!".format(kf=keyfolder))
@@ -188,5 +198,8 @@ if not fileout and not (filein and keyfromfile): # separator
 
 out(result)
 
-if deletekey and keyfromfile: # delete the key if evrything is ok
-    os.remove(keyfile)
+if keyfromfile:
+    if keyaction == "rename":
+        os.rename(keyfile, keyfile + "_used")
+    elif keyaction == "delete":
+        os.remove(keyfile)
