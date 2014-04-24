@@ -50,7 +50,6 @@ def out(output):
 
 
 
-
 ################ OPTIONS
 
 fileout = False         # output to a file
@@ -60,7 +59,7 @@ imode = "auto"          # input mode
 omode = "auto"          # output mode
 genkey = False          # generate keys
 deletekey = True        # detele used key
-notenoughkeys = 5       # for warning (see line 156)
+notenoughkeys = 5       # for warning (see KEY INPUT)
 
 if "-o" in sys.argv:
     fileout = True
@@ -132,7 +131,7 @@ else: # direct input
 
 if imode in ["auto", "hex"]:
     try: # try to decode hex
-        text = bytes.fromhex(text.replace(b" ", b"").decode("utf-8"))
+        text = bytes.fromhex(text.decode("utf-8"))
         if omode == "auto": # if user inputs hex code,
             omode = "bin"   # probably he wants to get a text
     except:           # if user inputs not hex code,
@@ -161,7 +160,8 @@ if keyfromfile: # use folder with keys
         key = f.read()
 
 else: # manually input the key
-    key = bytes.fromhex(input("enter the key > ").replace(" ", ""))
+    key = bytes.fromhex(input("enter the key > "))
+
 
 
 ################ DON'T LET USER TO USE TOO SHORT KEY
@@ -169,6 +169,8 @@ else: # manually input the key
 if not validate_key(key, text):
     print("the key must have the text length or be longer")
     exit()
+
+
 
 ################ ENCRYPTION/DECRYPTION
 
