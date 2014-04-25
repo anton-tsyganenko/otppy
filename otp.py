@@ -35,9 +35,6 @@ def bxor(b1, b2): # use xor for bytes
         result += bytes([b1 ^ b2])
     return result
 
-def validate_key(key, text): # check, if the key is too short
-    return len(key) >= len(text)
-
 def toHex(data): # convert binary data to hex code
     return bytes(space.join("{:02x}".format(x) for x in data), "utf-8")
 
@@ -147,7 +144,6 @@ if keyfromfile: # use folder with keys
 
     newfl = fileslist.copy() # newlf is just for not modifying list,
                              # using in a loop
-
     for i in fileslist: # don't use used keys
         if "_used" in i:
             newfl.remove(i)
@@ -176,8 +172,8 @@ else: # manually input the key
 
 ################ DON'T LET USER TO USE TOO SHORT KEY
 
-if not validate_key(key, text):
-    print("the key must have the text length or be longer")
+if len(key) < len(text):
+    print("the key must have the text's length or be longer")
     exit()
 
 
@@ -190,7 +186,7 @@ result = bxor(text, key)
 
 ################ FINAL
 
-if omode in ["hex", "auto"]: # encrypted result convert to hex format
+if omode == "hex": # encrypted result convert to hex format
     result = toHex(result)
 
 if not fileout and not (filein and keyfromfile): # separator
