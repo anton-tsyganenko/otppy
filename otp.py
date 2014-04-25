@@ -39,7 +39,7 @@ def validate_key(key, text): # check, if the key is too short
     return len(key) >= len(text)
 
 def toHex(data): # convert binary data to hex code
-    return bytes(space.join('{:02x}'.format(x) for x in data), "utf-8")
+    return bytes(space.join("{:02x}".format(x) for x in data), "utf-8")
 
 def out(output):
     if fileout: # output to a file
@@ -58,7 +58,7 @@ keyfromfile = False     # use key from a folder
 imode = "auto"          # input mode
 omode = "auto"          # output mode
 genkey = False          # generate keys
-keyaction = "rename"    # detele used key
+keyaction = "rename"    # action for used key (rename, delete, leave)
 notenoughkeys = 5       # for warning (see KEY INPUT)
 
 if "-o" in sys.argv:
@@ -166,7 +166,7 @@ if keyfromfile: # use folder with keys
             "and one of them will be used now.")
 
     keyfile = keyfolder + os.sep + max(fileslist)
-    with open(keyfile, 'br') as f:
+    with open(keyfile, "br") as f:
         key = f.read()
 
 else: # manually input the key
@@ -198,7 +198,7 @@ if not fileout and not (filein and keyfromfile): # separator
 
 out(result)
 
-if keyfromfile:
+if keyfromfile: # delete or rename used key
     if keyaction == "rename":
         os.rename(keyfile, keyfile + "_used")
     elif keyaction == "delete":
