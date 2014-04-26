@@ -117,14 +117,13 @@ if genkey:
 if filein: # from a file
     with open(nextarg("-i"), "rb") as file:
         text = file.read()
-    if omode == "auto":
-        omode = "bin"
-    if imode == "auto": # not a mistake, look at first letters
+    if imode == "auto":
         imode = "bin"
+    if omode == "auto" and fileout:
+        omode = "bin"
 
 else: # direct input
-    text = input("enter the text > ")
-    text = bytes(text, "utf-8")
+    text = bytes(input("enter the text > "), "utf-8")
 
 if imode in ["auto", "hex"]:
     try: # try to decode hex
