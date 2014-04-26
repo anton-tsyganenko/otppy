@@ -101,7 +101,7 @@ if genkey:
     else: # folder with binary key files
         keyfolder = nextarg("-o")
         try:
-            os.mkdir(keyfolder)
+            os.makedirs(keyfolder)
         except:
             pass
         for i in range(number):
