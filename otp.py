@@ -30,10 +30,10 @@ def nextarg(arg): # just for better readability
     return sys.argv[sys.argv.index(arg) + 1]
 
 def bxor(b1, b2): # use xor for bytes
-    result = b""
+    result = bytearray()
     for b1, b2 in zip(b1, b2):
-        result += bytes([b1 ^ b2])
-    return result
+        result.append(b1 ^ b2)
+    return bytes(result)
 
 def toHex(data): # convert binary data to hex code
     return bytes(space.join("{:02x}".format(x) for x in data), "utf-8")
