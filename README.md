@@ -16,11 +16,11 @@ one-time pad, written with python
 
 ##getting started
 
-1. Generate a folder with keys using the `./otp.py --gen-key -o keys_folder` command. The program will ask you the number of keys, that is equal to the number of messages and keys length, that is equal to the maximum length of each message. Do not make them too short or too long. It's recommended to generate 100-10000 keys with a 100-10000 bytes size according to the situation.
-2. Send the folder to your recipient using a **secure** channel. You can zip the folder without compression.
-3. To encrypt a message, use the `./otp.py -ki keys_folder` command. Enter your message, then press enter and then ctrl+d. Now the result is ready to be sent to the recipient.
-4. To decrypt a message, use the same command (`./otp.py -ki keys_folder`). Enter the encrypted text, press enter and ctrl+d.
-5. Each key must be used only once. The number of keys is equal to the number of files in your keys folder. When you run out of your keys set, you won't be able to encrypt anything until you repeat steps 1 and 2.
+1. Generate 2 folders with keys using commands `./otp.py --gen-key -o you_to_interlocutor` and `./otp.py --gen-key -o interlocutor_to_you`. The program will ask you the number of keys, that is equal to the number of messages and keys length, that is equal to the maximum length of each message. Do not make them too short or too long. It's recommended to generate 100-10000 keys with a 100-10000 bytes size according to the situation. If you have a one-way communication, you can only generate one folder with keys or generate small 2 folder.
+2. Send this folders to your recipient using a **secure** channel. You can zip the folder without compression.
+3. To encrypt a message, use the `./otp.py -ki you_to_interlocutor` command. Enter your message and press enter. Now the result is ready to be sent to the recipient.
+4. To decrypt a message, use command `./otp.py -ki interlocutor_to_you`, then enter the encrypted text.
+5. Each key must be used only once. The number of keys is equal to the number of files in your keys folder, excluding files ending with "_used". When you run out of your keys set, you won't be able to encrypt anything until you repeat steps 1 and 2.
 
 ##examples
 
@@ -42,8 +42,7 @@ file encryption with getting the key from the folder:
 
 if you need to decode hex code into text, use the `./otp.py --imode hex --omode bin` command. Use zeros as a key:
 
-    enter the text, then press ENTER; CTRL+D
-    68 65 6c 6c 6f 2c 20 70 79 74 68 6f 6e
+    enter the text > 68 65 6c 6c 6f 2c 20 70 79 74 68 6f 6e
     enter the key > 00 00 00 00 00 00 00 00 00 00 00 00 00
     ================
 
