@@ -119,8 +119,11 @@ if filein: # from a file
         text = file.read()
     if imode == "auto":
         imode = "bin"
-    if omode == "auto" and fileout:
-        omode = "bin"
+    if omode == "auto":
+        if fileout:
+            omode = "bin"
+        else:
+            omode = "hex"
 
 else: # direct input
     text = bytes(input("enter the text > "), "utf-8")
@@ -185,7 +188,7 @@ result = bxor(text, key)
 
 ################ FINAL
 
-if omode == "hex": # encrypted result convert to hex format
+if omode == "hex": # convert encrypted result to hex format
     result = toHex(result)
 
 if not fileout and not (filein and keyfromfile): # separator
