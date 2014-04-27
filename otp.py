@@ -22,12 +22,13 @@
 
 import os
 import sys
+import optparse
+
+notenoughkeys = 5 # for warning (see KEY INPUT)
+
 
 
 ################ FUNCTIONS
-
-def nextarg(arg): # just for better readability
-    return sys.argv[sys.argv.index(arg) + 1]
 
 def bxor(b1, b2): # use xor for bytes
     result = bytearray()
@@ -39,7 +40,7 @@ def toHex(data): # convert binary data to hex code
     return bytes(space.join("{:02x}".format(x) for x in data), "utf-8")
 
 def out(output):
-    if fileout: # output to a file
+    if outfile: # output to a file
         with open(nextarg("-o"), "bw") as outFile:
             outFile.write(output)
     else:
@@ -49,37 +50,64 @@ def out(output):
 
 ################ OPTIONS
 
-fileout = False         # output to a file
-filein = False          # get data from a file
-keyfromfile = False     # use key from a folder
-imode = "auto"          # input mode
-omode = "auto"          # output mode
-genkey = False          # generate keys
-keyaction = "rename"    # action for used key (rename, delete, leave)
-notenoughkeys = 5       # for warning (see KEY INPUT)
+parser = optparse.OptionParser()
 
-if "-o" in sys.argv:
-    fileout = True
+parser.add_option("-o", "--output-file",
+                  dest = "outfile",
+                  help = "write output to FILE",
+                  metavar = "FILE")
 
-if "-i" in sys.argv:
-    filein = True
+parser.add_option("-i", "--input-file",
+                  dest = "infile",
+                  help = "write output to FILE",
+                  metavar = "FILE")
 
-if "-ki" in sys.argv:
-    keyfromfile = True
+parser.add_option("-k", "--keys-folder",
+                  dest = "keyfolder",
+                  help = "get a key from FOLDER",
+                  metavar = "FOLDER")
 
-if "--key-action" in sys.argv:
-    keyaction = nextarg("--key-action")
+parser.add_option("--key-action",
+                  dest = "keyaction",
+                  choices = ["leave", "delete", "rename"],
+                  help = "action to do with used key, can be " +
+                       "`leave`, `delete` or `rename`",
+                  metavar = "ACTION")
 
-if "--imode" in sys.argv:
-    imode = nextarg("--imode")
+parser.add_option("-I", "--input-mode",
+                  dest = "imode",
+                  default = "auto",
+                  help = "input mode, can be `bin` or `hex`",
+                  metavar = "MODE")
 
-if "--omode" in sys.argv:
-    omode = nextarg("--omode")
+parser.add_option("-O", "--output-mode",
+                  dest = "omode",
+                  default = "auto",
+                  help = "output mode, can be `bin` or `hex`",
+                  metavar = "MODE")
 
-if "--gen-key" in sys.argv:
-    genkey = True
+parser.add_option("--gen-keys",
+                  dest = "genkey",
+                  default = False,
+                  action = "store_true",
+                  help = "generate keys")
 
-if "--no-spaces" in sys.argv:
+parser.add_option("--no-spaces",
+                  dest = "nospaces",
+                  default = False,
+                  action = "store_true",
+                  help = "do not use spaces in hex code")
+
+(options, args) = parser.parse_args()
+
+infile = options.infile
+outfile = options.outfile
+keyfolder = options.keyfolder
+keyaction = options.keyaction
+imode = options.imode
+omode = options.omode
+genkey = options.genkey
+if options.nospaces:
     space = ""
 else:
     space = " "
@@ -92,20 +120,19 @@ if genkey:
     number = int(input("number of keys > "))
     length = int(input("key length > "))
 
-    if omode == "hex" or not fileout: # text with keys in hex format
+    if omode == "hex" or not outfile: # text with keys in hex format
         result = b""
         for i in range(number):
             result += toHex(os.urandom(length)) + b"\n"
         out(result)
 
     else: # folder with binary key files
-        keyfolder = nextarg("-o")
         try:
-            os.makedirs(keyfolder)
+            os.makedirs(outfile)
         except:
             pass
         for i in range(number):
-            with open(keyfolder + os.sep + str(i), "xb") as f:
+            with open(outfile + os.sep + str(i), "xb") as f:
                 f.write(os.urandom(length))
 
     exit()
@@ -114,13 +141,13 @@ if genkey:
 
 ################ TEXT INPUT
 
-if filein: # from a file
-    with open(nextarg("-i"), "rb") as file:
+if infile: # from a file
+    with open(infile, "rb") as file:
         text = file.read()
     if imode == "auto":
         imode = "bin"
     if omode == "auto":
-        if fileout:
+        if outfile:
             omode = "bin"
         else:
             omode = "hex"
@@ -140,8 +167,7 @@ if imode in ["auto", "hex"]:
 
 ################ KEY INPUT
 
-if keyfromfile: # use folder with keys
-    keyfolder = nextarg("-ki")
+if keyfolder: # use folder with keys
     fileslist = os.listdir(keyfolder)
 
     newfl = fileslist.copy() # newlf is just for not modifying list,
@@ -191,12 +217,12 @@ result = bxor(text, key)
 if omode == "hex": # convert encrypted result to hex format
     result = toHex(result)
 
-if not fileout and not (filein and keyfromfile): # separator
+if not outfile and not (infile and keyfolder): # separator
     print("================\n")
 
 out(result)
 
-if keyfromfile: # delete or rename used key
+if keyfolder: # delete or rename used key
     if keyaction == "rename":
         os.rename(keyfile, keyfile + "_used")
     elif keyaction == "delete":
