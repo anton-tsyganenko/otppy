@@ -51,7 +51,7 @@ if you need to decode hex code into text, use the `./otp.py --imode hex --omode 
 ##also
 
 * It's highly recommended to generate 2 sets of keys: for outgoing messages and for incoming messages. Avoid simultaneous usage of the same key - it is insecure, however may happen if you and your interlocutor, both send messages at the same time.
-* Do not encrypt large files, but feel free to encrypt normal-size files (about a few MB) encryption of big files (more than 100 MB) will take longer. **Make sure that the total size of the file and the key is less than free RAM**
+* If you encrypt files, make sure, that file size, multiplied by 3 is less than free RAM
 * The program can be used if you have 2 channels, whick both can be wiretapped. In this case you should send the keys set using one channel and messages using another one. To decrypt messages, both channels must be wiretapped.
 * The security of the cipher depends on the way of keys transmission. It's recommended to transmit keys on a face-to-face, meeting using a flash storage or a CD. Also you can encrypt keys using truecrypt, encrypted zip, etc.
 * Note, that some symbols, like cyrillic letters, can use more than 1 byte for each symbol.
