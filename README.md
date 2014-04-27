@@ -5,28 +5,28 @@ one-time pad, written with python
 
 ##options
 
-`-o file` - redirect output to the file  
-`-i file` - get data from the file  
-`-ki folder` - get a key from the folder  
-`--imode mode` - input mode (can be hex or bin)  
-`--omode mode` - output mode (can be hex or bin)  
-`--gen-key` - generate keys  
+`-o file`, `--output-file=file` - redirect output to the file  
+`-i file`, `--input-file=file` - get data from the file  
+`-k folder`, `--keys-folder=folder` - get a key from the folder  
+`-I mode`, `--input-mode=mode` - input mode (can be hex or bin)  
+`-O mode`, `--output-mode=mode` - output mode (can be hex or bin)  
+`--gen-keys` - generate keys  
 `--no-spaces` - do not insert spaces into hex code  
 `--key-action action` - action to do with used key (`leave`, `delete` or `rename` to mark as used)  
 
 ##getting started
 
-1. Generate 2 folders with keys using commands `./otp.py --gen-key -o you_to_interlocutor` and `./otp.py --gen-key -o interlocutor_to_you`. The program will ask you the number of keys, that is equal to the number of messages and keys length, that is equal to the maximum length of each message. Do not make them too short or too long. It's recommended to generate 100-10000 keys with a 100-10000 bytes size according to the situation. If you have a one-way communication, you can only generate one folder with keys or generate small 2 folder.
+1. Generate 2 folders with keys using commands `./otp.py --gen-keys -o you_to_interlocutor` and `./otp.py --gen-keys -o interlocutor_to_you`. The program will ask you the number of keys, that is equal to the number of messages and keys length, that is equal to the maximum length of each message. Do not make them too short or too long. It's recommended to generate 100-10000 keys with a 100-10000 bytes size according to the situation. If you have a one-way communication, you can only generate one folder with keys or generate small 2 folder.
 2. Send this folders to your recipient using a **secure** channel. You can zip the folder without compression.
-3. To encrypt a message, use the `./otp.py -ki you_to_interlocutor` command. Enter your message and press enter. Now the result is ready to be sent to the recipient.
-4. To decrypt a message, use command `./otp.py -ki interlocutor_to_you`, then enter the encrypted text.
+3. To encrypt a message, use the `./otp.py -k you_to_interlocutor` command. Enter your message and press enter. Now the result is ready to be sent to the recipient.
+4. To decrypt a message, use command `./otp.py -k interlocutor_to_you`, then enter the encrypted text.
 5. Each key must be used only once. The number of keys is equal to the number of files in your keys folder, excluding files ending with "_used". When you run out of your keys set, you won't be able to encrypt anything until you repeat steps 1 and 2.
 
 ##examples
 
 generation of a new folder with keys:
 
-    ./otp.py --gen-key -o keys
+    ./otp.py --gen-keys -o keys
 
 encryption/decryption with manual text and key input:
 
@@ -34,13 +34,13 @@ encryption/decryption with manual text and key input:
 
 encryption/decryption with manual text input and getting the key from the folder:
 
-    ./otp.py -ki keys
+    ./otp.py -k keys
 
 file encryption with getting the key from the folder:
 
-    ./otp.py -ki keys -i file.in -o file.out
+    ./otp.py -k keys -i file.in -o file.out
 
-if you need to decode hex code into text, use the `./otp.py --imode hex --omode bin` command. Use zeros as a key:
+if you need to decode hex code into text, use the `./otp.py -I hex -O bin` command. Use zeros as a key:
 
     enter the text > 68 65 6c 6c 6f 2c 20 70 79 74 68 6f 6e
     enter the key > 00 00 00 00 00 00 00 00 00 00 00 00 00
