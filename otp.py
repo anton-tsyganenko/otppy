@@ -70,6 +70,7 @@ parser.add_option("-k", "--keys-folder",
 parser.add_option("--key-action",
                   dest = "keyaction",
                   choices = ["leave", "delete", "rename"],
+                  default = "rename",
                   help = "action to do with used key, can be " +
                        "`leave`, `delete` or `rename`",
                   metavar = "ACTION")
@@ -189,7 +190,7 @@ if keyfolder: # use folder with keys
             "WARNING! only {k} keys left, ".format(k=len(fileslist)) +
             "and one of them will be used now.")
 
-    keyfile = keyfolder + os.sep + max(fileslist)
+    keyfile = keyfolder + os.sep + max(fileslist, key=int)
     with open(keyfile, "br") as f:
         key = f.read(len(text))
 
