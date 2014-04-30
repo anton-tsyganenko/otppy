@@ -94,11 +94,12 @@ parser.add_option("--gen-keys",
                   action = "store_true",
                   help = "generate keys")
 
-parser.add_option("--hash",
+parser.add_option("-c", "--hash",
                   dest = "hashaction",
                   choices = ["check", "add"],
                   action = "store",
-                  help = "check or add a hashsum")
+                  metavar = "ACTION",
+                  help = "`check` or `add` a hashsum")
 
 parser.add_option("--no-spaces",
                   dest = "nospaces",
