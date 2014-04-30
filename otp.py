@@ -23,6 +23,7 @@
 import os
 import sys
 import optparse
+import hashlib
 
 notenoughkeys = 5 # for warning (see KEY INPUT)
 
@@ -93,6 +94,12 @@ parser.add_option("--gen-keys",
                   action = "store_true",
                   help = "generate keys")
 
+parser.add_option("--hash",
+                  dest = "hashaction",
+                  choices = ["check", "add"],
+                  action = "store",
+                  help = "check or add a hashsum")
+
 parser.add_option("--no-spaces",
                   dest = "nospaces",
                   default = False,
@@ -108,6 +115,8 @@ keyaction = options.keyaction
 imode = options.imode
 omode = options.omode
 genkey = options.genkey
+hashaction = options.hashaction
+
 if options.nospaces:
     space = ""
 else:
@@ -165,6 +174,14 @@ if imode in ["auto", "hex"]:
         omode = "hex" # probably he wants to get a hex code
 
 
+################ ADD A HASHSUM
+
+
+
+if hashaction == "add":
+    texthash = hashlib.sha1(text).digest()
+    text += texthash
+
 
 ################ KEY INPUT
 
@@ -210,6 +227,20 @@ if len(key) < len(text):
 ################ ENCRYPTION/DECRYPTION
 
 result = bxor(text, key)
+
+
+
+################ CHECK A HASHSUM
+
+if hashaction == "check":
+    resulthash = hashlib.sha1(result[0:-20]).digest()
+    if resulthash == result[-20:]:
+        print("================\nThe hashsum is ok.")
+    else:
+        print("================")
+        print("WARNING! The hashsum is wrong!")
+
+    result = result[0:-20]
 
 
 
