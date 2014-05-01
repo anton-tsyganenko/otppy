@@ -42,8 +42,8 @@ def toHex(data): # convert binary data to hex code
 
 def out(output):
     if outfile: # output to a file
-        with open(nextarg("-o"), "bw") as outFile:
-            outFile.write(output)
+        with open(outfile, "bw") as file:
+            file.write(output)
     else:
         print(output.decode("utf-8"))
 
@@ -158,6 +158,15 @@ if genkey:
 if infile: # from a file
     with open(infile, "rb") as file:
         text = file.read()
+
+else: # direct input
+    text = bytes(input("enter the text > "), "utf-8")
+
+
+
+################ SETTINGS GUESSING
+
+if infile:
     if imode == "auto":
         imode = "bin"
     if omode == "auto":
@@ -166,26 +175,23 @@ if infile: # from a file
         else:
             omode = "hex"
 
-else: # direct input
-    text = bytes(input("enter the text > "), "utf-8")
-
-
-################ SETTINGS GUESSING
-
 if imode in ["auto", "hex"]:
     try: # try to decode hex
         text = bytes.fromhex(text.decode("utf-8"))
         if omode == "auto": # if user inputs hex code,
             omode = "bin"   # probably he wants to get a text
     except:           # if user inputs not hex code,
-        omode = "hex" # probably he wants to get a hex code
+        if not outfile:
+            omode = "hex" # probably he wants to get a hex code
 
 
 if hashaction == "auto":
-    if omode == "hex":
+    if omode == "hex" or (outfile and not infile):
         hashaction = "add"
     else:
         hashaction = "check"
+
+
 
 ################ KEY INPUT
 
@@ -213,7 +219,7 @@ if keyfolder: # use folder with keys
 
     keyfile = keyfolder + os.sep + max(fileslist, key=int)
     with open(keyfile, "br") as f:
-        key = f.read(len(text))
+        key = f.read(len(text)+20) # 20 is length of a hash sum
 
 else: # manually input the key
     key = bytes.fromhex(input("enter the key > "))
@@ -234,7 +240,6 @@ if hashaction == "add":
     texthash = hashlib.sha1(text).digest()
     text += texthash
     print("================\nThe hash sum was added")
-
 
 
 ################ ENCRYPTION/DECRYPTION
@@ -266,8 +271,8 @@ if hashaction == "check":
 if omode == "hex": # convert encrypted result to hex format
     result = toHex(result)
 
-if not outfile and not (infile and keyfolder): # separator
-    print("================\n")
+if not outfile and not (infile and keyfolder and hashaction == "no"):
+    print("================\n") # separator
 
 out(result)
 
