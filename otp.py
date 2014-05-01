@@ -175,13 +175,13 @@ if imode in ["auto", "hex"]:
         omode = "hex" # probably he wants to get a hex code
 
 
+
 ################ ADD A HASHSUM
-
-
 
 if hashaction == "add":
     texthash = hashlib.sha1(text).digest()
     text += texthash
+
 
 
 ################ KEY INPUT
@@ -233,8 +233,12 @@ result = bxor(text, key)
 
 ################ CHECK A HASHSUM
 
+# the hashsum of the text, excluding the last 20 bytes
+# takes last 20 bytes of text.
+
 if hashaction == "check":
     resulthash = hashlib.sha1(result[0:-20]).digest()
+
     if resulthash == result[-20:]:
         print("================\nThe hashsum is ok.")
     else:
