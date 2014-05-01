@@ -80,11 +80,13 @@ parser.add_option("-I", "--input-mode",
                   dest = "imode",
                   default = "auto",
                   help = "input mode, can be `bin` or `hex`",
+                  choices = ["bin", "hex", "auto"],
                   metavar = "MODE")
 
 parser.add_option("-O", "--output-mode",
                   dest = "omode",
                   default = "auto",
+                  choices = ["bin", "hex", "auto"],
                   help = "output mode, can be `bin` or `hex`",
                   metavar = "MODE")
 
@@ -96,7 +98,8 @@ parser.add_option("--gen-keys",
 
 parser.add_option("-c", "--hash",
                   dest = "hashaction",
-                  choices = ["check", "add"],
+                  choices = ["check", "add", "no", "auto"],
+                  default = "auto",
                   action = "store",
                   metavar = "ACTION",
                   help = "`check` or `add` a hashsum")
@@ -166,6 +169,9 @@ if infile: # from a file
 else: # direct input
     text = bytes(input("enter the text > "), "utf-8")
 
+
+################ SETTINGS GUESSING
+
 if imode in ["auto", "hex"]:
     try: # try to decode hex
         text = bytes.fromhex(text.decode("utf-8"))
@@ -175,14 +181,11 @@ if imode in ["auto", "hex"]:
         omode = "hex" # probably he wants to get a hex code
 
 
-
-################ ADD A HASHSUM
-
-if hashaction == "add":
-    texthash = hashlib.sha1(text).digest()
-    text += texthash
-
-
+if hashaction == "auto":
+    if omode == "hex":
+        hashaction = "add"
+    else:
+        hashaction = "check"
 
 ################ KEY INPUT
 
@@ -225,25 +228,34 @@ if len(key) < len(text):
 
 
 
+################ ADD A HASH SUM
+
+if hashaction == "add":
+    texthash = hashlib.sha1(text).digest()
+    text += texthash
+    print("================\nThe hash sum was added")
+
+
+
 ################ ENCRYPTION/DECRYPTION
 
 result = bxor(text, key)
 
 
 
-################ CHECK A HASHSUM
+################ CHECK A HASH SUM
 
-# the hashsum of the text, excluding the last 20 bytes
+# the hash sum of the text, excluding the last 20 bytes
 # takes last 20 bytes of text.
 
 if hashaction == "check":
     resulthash = hashlib.sha1(result[0:-20]).digest()
 
     if resulthash == result[-20:]:
-        print("================\nThe hashsum is ok.")
+        print("================\nThe hash sum is ok")
     else:
         print("================")
-        print("WARNING! The hashsum is wrong!")
+        print("WARNING! The hash sum is wrong!")
 
     result = result[0:-20]
 
