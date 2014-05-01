@@ -43,9 +43,9 @@ encryption/decryption with manual text input, getting the key from the folder an
 
     ./otp.py -k keys -c add
 
-file encryption with getting the key from the folder:
+file decryption with getting the key from the folder and checking the hash sum:
 
-    ./otp.py -k keys -i file.in -o file.out
+    ./otp.py -k keys -i file.in -o file.out -c check
 
 if you need to decode hex code into text, use the `./otp.py -I hex -O bin` command. Use zeros as a key:
 
