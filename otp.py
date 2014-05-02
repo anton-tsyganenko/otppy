@@ -222,10 +222,9 @@ else: # manually input the key
 
 ################ ADD A HASH SUM
 
-if hashaction == "add":
+if hashaction != "no":
     texthash = hashlib.sha1(text).digest()
     text += texthash
-    print("================\nThe hash sum was added")
 
 
 
@@ -248,16 +247,15 @@ result = bxor(text, key)
 # the hash sum of the text, excluding the last 20 bytes
 # takes last 20 bytes of text.
 
-if hashaction == "check":
-    resulthash = hashlib.sha1(result[0:-20]).digest()
+if hashaction != "no":
+    resulthash = hashlib.sha1(result[0:-40]).digest()
 
-    if resulthash == result[-20:]:
+    if resulthash == result[-40:-20]:
         print("================\nThe hash sum is ok")
+        result = result[0:-40]
     else:
         print("================")
-        print("WARNING! The hash sum is wrong!")
-
-    result = result[0:-20]
+        print("The hash sum was added/wrong")
 
 
 
