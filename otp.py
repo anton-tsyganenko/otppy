@@ -94,13 +94,11 @@ parser.add_option("-g", "--gen-keys",
                   action = "store_true",
                   help = "generate keys")
 
-parser.add_option("-c", "--hash",
-                  dest = "hashaction",
-                  choices = ["check", "add", "no", "auto"],
-                  default = "auto",
-                  action = "store",
-                  metavar = "ACTION",
-                  help = "`check` or `add` a hash sum")
+parser.add_option("-n", "--no-hash",
+                  dest = "usehash",
+                  default = True,
+                  action = "store_false",
+                  help = "don't use a hash sum")
 
 
 (options, args) = parser.parse_args()
@@ -112,9 +110,9 @@ keyaction = options.keyaction
 imode = options.imode
 omode = options.omode
 genkey = options.genkey
-hashaction = options.hashaction
+usehash = options.usehash
 
-if hashaction != "no":
+if usehash:
     hashlen = 20
 else:
     hashlen = 0
@@ -166,19 +164,13 @@ if infile:
 
 if imode in ["auto", "b64"]:
     try: # try to decode base64
-        text = base64.b64decode(text.decode("utf-8"))
+        text = base64.b64decode(text.decode("utf-8"), validate=True)
         if omode == "auto": # if user inputs base64 data,
             omode = "bin"   # probably he wants to get a text
     except:           # if user inputs not base64 data,
         if not outfile:
             omode = "b64" # probably he wants to get base64 code
 
-
-if hashaction == "auto":
-    if omode == "b64" or (outfile and not infile):
-        hashaction = "add"
-    else:
-        hashaction = "check"
 
 # there are some other settings guessing code in FINAL.
 
@@ -222,7 +214,7 @@ else: # manually input the key
 
 ################ ADD A HASH SUM
 
-if hashaction != "no":
+if usehash:
     texthash = hashlib.sha1(text).digest()
     text += texthash
 
@@ -247,7 +239,7 @@ result = bxor(text, key)
 # the hash sum of the text, excluding the last 20 bytes
 # takes last 20 bytes of text.
 
-if hashaction != "no":
+if usehash:
     resulthash = hashlib.sha1(result[0:-40]).digest()
 
     if resulthash == result[-40:-20]:
@@ -275,7 +267,7 @@ if omode == "auto": # settings guessing
 if omode == "b64": # convert encrypted result to base64
     result = base64.b64encode(result)
 
-if not outfile and not (infile and keysource and hashaction == "no"):
+if not outfile and not (infile and keysource and not usehash):
     print("================\n") # separator
 
 out(result)
