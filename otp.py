@@ -24,6 +24,7 @@ import os
 import sys
 import optparse
 import hashlib
+import base64
 
 notenoughkeys = 5 # for warning (see KEY INPUT)
 
@@ -36,9 +37,6 @@ def bxor(b1, b2): # use xor for bytes
     for b1, b2 in zip(b1, b2):
         result.append(b1 ^ b2)
     return bytes(result)
-
-def toHex(data): # convert binary data to hex code
-    return bytes(space.join("{:02x}".format(x) for x in data), "utf-8")
 
 def out(output):
     if outfile: # output to a file
@@ -79,15 +77,15 @@ parser.add_option("--key-action",
 parser.add_option("-I", "--input-mode",
                   dest = "imode",
                   default = "auto",
-                  help = "input mode, can be `bin` or `hex`",
-                  choices = ["bin", "hex", "auto"],
+                  help = "input mode, can be `bin` or `b64`",
+                  choices = ["bin", "b64", "auto"],
                   metavar = "MODE")
 
 parser.add_option("-O", "--output-mode",
                   dest = "omode",
                   default = "auto",
-                  choices = ["bin", "hex", "auto"],
-                  help = "output mode, can be `bin` or `hex`",
+                  choices = ["bin", "b64", "auto"],
+                  help = "output mode, can be `bin` or `b64`",
                   metavar = "MODE")
 
 parser.add_option("--gen-keys",
@@ -104,11 +102,6 @@ parser.add_option("-c", "--hash",
                   metavar = "ACTION",
                   help = "`check` or `add` a hashsum")
 
-parser.add_option("--no-spaces",
-                  dest = "nospaces",
-                  default = False,
-                  action = "store_true",
-                  help = "do not use spaces in hex code")
 
 (options, args) = parser.parse_args()
 
@@ -121,10 +114,10 @@ omode = options.omode
 genkey = options.genkey
 hashaction = options.hashaction
 
-if options.nospaces:
-    space = ""
+if hashaction != "no":
+    hashlen = 20
 else:
-    space = " "
+    hashlen = 0
 
 
 
@@ -134,10 +127,10 @@ if genkey:
     number = int(input("number of keys > "))
     length = int(input("key length > "))
 
-    if omode == "hex" or not outfile: # text with keys in hex format
+    if omode == "b64" or not outfile: # text with keys in base64
         result = b""
         for i in range(number):
-            result += toHex(os.urandom(length)) + b"\n"
+            result += base64.b64encode(os.urandom(length)) + b"\n"
         out(result)
 
     else: # folder with binary key files
@@ -173,20 +166,21 @@ if infile:
         if outfile:
             omode = "bin"
         else:
-            omode = "hex"
+            omode = "b64"
 
-if imode in ["auto", "hex"]:
-    try: # try to decode hex
-        text = bytes.fromhex(text.decode("utf-8"))
-        if omode == "auto": # if user inputs hex code,
+
+if imode in ["auto", "b64"]:
+    try: # try to decode base64
+        text = base64.b64decode(text.decode("utf-8"))
+        if omode == "auto": # if user inputs base64 data,
             omode = "bin"   # probably he wants to get a text
-    except:           # if user inputs not hex code,
+    except:           # if user inputs not base64 data,
         if not outfile:
-            omode = "hex" # probably he wants to get a hex code
+            omode = "b64" # probably he wants to get base64 code
 
 
 if hashaction == "auto":
-    if omode == "hex" or (outfile and not infile):
+    if omode == "b64" or (outfile and not infile):
         hashaction = "add"
     else:
         hashaction = "check"
@@ -219,18 +213,10 @@ if keyfolder: # use folder with keys
 
     keyfile = keyfolder + os.sep + max(fileslist, key=int)
     with open(keyfile, "br") as f:
-        key = f.read(len(text)+20) # 20 is length of a hash sum
+        key = f.read(len(text)+hashlen)
 
 else: # manually input the key
-    key = bytes.fromhex(input("enter the key > "))
-
-
-
-################ DON'T LET USER TO USE TOO SHORT KEY
-
-if len(key) < len(text):
-    print("the key must have the text's length or be longer")
-    exit()
+    key = base64.b64decode(input("enter the key > "))
 
 
 
@@ -240,6 +226,15 @@ if hashaction == "add":
     texthash = hashlib.sha1(text).digest()
     text += texthash
     print("================\nThe hash sum was added")
+
+
+
+################ DON'T LET USER TO USE TOO SHORT KEY
+
+if len(key) < (len(text)):
+    print("the key must have the text's length or be longer")
+    exit()
+
 
 
 ################ ENCRYPTION/DECRYPTION
@@ -268,8 +263,8 @@ if hashaction == "check":
 
 ################ FINAL
 
-if omode == "hex": # convert encrypted result to hex format
-    result = toHex(result)
+if omode == "b64": # convert encrypted result to base64
+    result = base64.b64encode(result)
 
 if not outfile and not (infile and keyfolder and hashaction == "no"):
     print("================\n") # separator

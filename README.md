@@ -8,11 +8,10 @@ one-time pad, written with python
 `-o file`, `--output-file=file` - redirect output to the file  
 `-i file`, `--input-file=file` - get data from the file  
 `-k folder`, `--keys-folder=folder` - get a key from the folder  
-`-I mode`, `--input-mode=mode` - input mode (can be `hex`, `bin` or `auto`)  
-`-O mode`, `--output-mode=mode` - output mode (can be `hex`, `bin` or `auto`)  
+`-I mode`, `--input-mode=mode` - input mode (can be `b64` - base64 data, `bin` or `auto`)  
+`-O mode`, `--output-mode=mode` - output mode (can be `b64`, `bin` or `auto`)  
 `-c action`, `--hash=action` - use hash sum (`check`- when you decrypt a message or `add` - when you encrypt a message, `no` - don't use (not recommended) or `auto` (by default))
 `--gen-keys` - generate keys  
-`--no-spaces` - do not insert spaces into hex code  
 `--key-action action` - action to do with used key (`leave`, `delete` or `rename` to mark as used)  
 
 ##getting started
@@ -47,13 +46,6 @@ file decryption with getting the key from the folder and checking the hash sum:
 
     ./otp.py -k keys -i file.in -o file.out -c check
 
-if you need to decode hex code into text, use the `./otp.py -I hex -O bin` command. Use zeros as a key:
-
-    enter the text > 68 65 6c 6c 6f 2c 20 70 79 74 68 6f 6e
-    enter the key > 00 00 00 00 00 00 00 00 00 00 00 00 00
-    ================
-
-    hello, python
 
 ##also
 
