@@ -11,14 +11,14 @@ one-time pad, written with python
 `-I mode`, `--input-mode=mode` - input mode (can be `b64` - base64 data, `bin` or `auto`)  
 `-O mode`, `--output-mode=mode` - output mode (can be `b64`, `bin` or `auto`)  
 `-c action`, `--hash=action` - use hash sum (`check`- when you decrypt a message or `add` - when you encrypt a message, `no` - don't use (not recommended) or `auto` (by default))
-`--gen-keys` - generate keys  
-`--key-action action` - action to do with used key (`leave`, `delete` or `rename` to mark as used)  
+`-g`, `--gen-keys` - generate keys  
+`-K`, `--key-action action` - action to do with used key (`leave`, `delete` or `rename` to mark as used)  
 
 ##getting started
 
 If you have already got key sets, skip steps 1 and 2.
 
-1. Generate 2 folders with keys using commands `./otp.py --gen-keys -o you_to_interlocutor` and `./otp.py --gen-keys -o interlocutor_to_you`. The program will ask you the number of keys, that is equal to the number of messages and keys length, that is equal to the maximum length of each message. Do not make them too short or too long. It's recommended to generate 100-10000 keys with a 100-10000 bytes size according to the situation. If you have a one-way communication, you can only generate one folder with keys or generate small 2 folder.
+1. Generate 2 folders with keys using commands `./otp.py -g -o you_to_interlocutor` and `./otp.py -g -o interlocutor_to_you`. The program will ask you the number of keys, that is equal to the number of messages and keys length, that is equal to the maximum length of each message. Do not make them too short or too long. It's recommended to generate 100-10000 keys with a 100-10000 bytes size according to the situation. If you have a one-way communication, you can only generate one folder with keys or generate small 2 folder.
 2. Send this folders to your recipient using a **secure** channel. You can zip the folder without compression.
 3. To encrypt a message, use the `./otp.py -k you_to_interlocutor` command. Enter your message and press enter. Now the result is ready to be sent to the recipient.
 4. To decrypt a message, use command `./otp.py -k interlocutor_to_you`, then enter the encrypted text.
@@ -28,7 +28,7 @@ If you have already got key sets, skip steps 1 and 2.
 
 generation of a new folder with keys:
 
-    ./otp.py --gen-keys -o keys
+    ./otp.py -g -o keys
 
 encryption/decryption with manual text and key input:
 

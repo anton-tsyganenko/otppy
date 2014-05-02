@@ -62,11 +62,11 @@ parser.add_option("-i", "--input-file",
                   metavar = "FILE")
 
 parser.add_option("-k", "--keys-folder",
-                  dest = "keyfolder",
+                  dest = "keysource",
                   help = "get a key from FOLDER",
                   metavar = "FOLDER")
 
-parser.add_option("--key-action",
+parser.add_option("-K", "--key-action",
                   dest = "keyaction",
                   choices = ["leave", "delete", "rename"],
                   default = "rename",
@@ -88,7 +88,7 @@ parser.add_option("-O", "--output-mode",
                   help = "output mode, can be `bin` or `b64`",
                   metavar = "MODE")
 
-parser.add_option("--gen-keys",
+parser.add_option("-g", "--gen-keys",
                   dest = "genkey",
                   default = False,
                   action = "store_true",
@@ -100,14 +100,14 @@ parser.add_option("-c", "--hash",
                   default = "auto",
                   action = "store",
                   metavar = "ACTION",
-                  help = "`check` or `add` a hashsum")
+                  help = "`check` or `add` a hash sum")
 
 
 (options, args) = parser.parse_args()
 
 infile = options.infile
 outfile = options.outfile
-keyfolder = options.keyfolder
+keysource = options.keysource
 keyaction = options.keyaction
 imode = options.imode
 omode = options.omode
@@ -162,11 +162,6 @@ else: # direct input
 if infile:
     if imode == "auto":
         imode = "bin"
-    if omode == "auto":
-        if outfile:
-            omode = "bin"
-        else:
-            omode = "b64"
 
 
 if imode in ["auto", "b64"]:
@@ -185,35 +180,40 @@ if hashaction == "auto":
     else:
         hashaction = "check"
 
+# there are some other settings guessing code in FINAL.
 
 
 ################ KEY INPUT
 
-if keyfolder: # use folder with keys
-    fileslist = os.listdir(keyfolder)
+if keysource: # use folder with keys
+    if os.path.isdir(keysource):
+        fileslist = os.listdir(keysource)
 
-    newfl = fileslist.copy() # newlf is just for not modifying list,
-                             # using in a loop
-    for i in fileslist: # don't use used keys
-        if "_used" in i:
-            newfl.remove(i)
+        newfl = fileslist.copy() # newlf is just for not modifying list,
+                                 # using in a loop
+        for i in fileslist: # don't use used keys
+            if "_used" in i:
+                newfl.remove(i)
 
-    fileslist = newfl
-    del newfl
+        fileslist = newfl
+        del newfl
 
-    if len(fileslist) == 0:
-        print("================\n" +
-              "NO KEYS IN {kf}!".format(kf=keyfolder))
-        exit()
+        if len(fileslist) == 0:
+            print("================\n" +
+                  "NO KEYS IN {kf}!".format(kf=keysource))
+            exit()
 
-    if len(fileslist) <= notenoughkeys:
-        print("================\n" +
-            "WARNING! only {k} keys left, ".format(k=len(fileslist)) +
-            "and one of them will be used now.")
+        if len(fileslist) <= notenoughkeys:
+            print("================")
+            print(("WARNING! only {k} keys left, and one of them " +
+                  "will be used now.").format(k=len(fileslist)))
 
-    keyfile = keyfolder + os.sep + max(fileslist, key=int)
-    with open(keyfile, "br") as f:
-        key = f.read(len(text)+hashlen)
+        keyfile = keysource + os.sep + max(fileslist, key=int)
+        with open(keyfile, "br") as f:
+            key = f.read(len(text)+hashlen)
+    else:
+        with open(keysource, "br") as f:
+            key = f.read(len(text)+hashlen)
 
 else: # manually input the key
     key = base64.b64decode(input("enter the key > "))
@@ -263,15 +263,26 @@ if hashaction == "check":
 
 ################ FINAL
 
+if omode == "auto": # settings guessing
+    try:
+        result.decode("utf-8")
+        omode = "bin"
+    except:
+        if not outfile:
+            omode = "b64"
+        else:
+            omode = "bin"
+
+
 if omode == "b64": # convert encrypted result to base64
     result = base64.b64encode(result)
 
-if not outfile and not (infile and keyfolder and hashaction == "no"):
+if not outfile and not (infile and keysource and hashaction == "no"):
     print("================\n") # separator
 
 out(result)
 
-if keyfolder: # delete or rename used key
+if keysource: # delete or rename used key
     if keyaction == "rename":
         os.rename(keyfile, keyfile + "_used")
     elif keyaction == "delete":
