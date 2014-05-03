@@ -242,11 +242,11 @@ result = bxor(text, key)
 if usehash:
     resulthash = hashlib.sha1(result[0:-40]).digest()
 
+    print("================")
     if resulthash == result[-40:-20]:
-        print("================\nThe hash sum is ok")
+        print("The hash sum is ok")
         result = result[0:-40]
     else:
-        print("================")
         print("The hash sum was added/wrong")
 
 
