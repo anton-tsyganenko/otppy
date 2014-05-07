@@ -182,14 +182,9 @@ if keysource: # use folder with keys
     if os.path.isdir(keysource):
         fileslist = os.listdir(keysource)
 
-        newfl = fileslist.copy() # newlf is just for not modifying list,
-                                 # using in a loop
-        for i in fileslist: # don't use used keys
+        for i in fileslist[:]: # don't use used keys
             if "_used" in i:
-                newfl.remove(i)
-
-        fileslist = newfl
-        del newfl
+                fileslist.remove(i)
 
         if len(fileslist) == 0:
             print("================\n" +
@@ -234,6 +229,7 @@ if len(key) < (len(text)):
 ################ ENCRYPTION/DECRYPTION
 
 result = bxor(text, key)
+del text, key
 
 
 
@@ -245,9 +241,9 @@ result = bxor(text, key)
 if hashaction:
     if hashaction == "check":
         hashplace = result[-20:]
-        resultbody = result[0:-20]
+        resultbody = memoryview(result)[0:-20]
     elif hashaction == "auto":
-        hashplace = result[-40:-20]
+        hashplace = memoryview(result)[-40:-20]
         resultbody = result[0:-40]
 
     if hashaction != "add":
