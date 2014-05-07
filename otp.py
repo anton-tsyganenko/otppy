@@ -94,11 +94,12 @@ parser.add_option("-g", "--gen-keys",
                   action = "store_true",
                   help = "generate keys")
 
-parser.add_option("-n", "--no-hash",
-                  dest = "usehash",
-                  default = True,
-                  action = "store_false",
-                  help = "don't use a hash sum")
+parser.add_option("-c", "--hash-action",
+                  dest = "hashaction",
+                  choices = ["no", "auto", "add", "check"],
+                  default = "auto",
+                  metavar = "ACTION",
+                  help = "action to do with hash sum")
 
 
 (options, args) = parser.parse_args()
@@ -110,9 +111,9 @@ keyaction = options.keyaction
 imode = options.imode
 omode = options.omode
 genkey = options.genkey
-usehash = options.usehash
+hashaction = options.hashaction
 
-if usehash:
+if hashaction in ["auto", "add"]:
     hashlen = 20
 else:
     hashlen = 0
@@ -214,7 +215,7 @@ else: # manually input the key
 
 ################ ADD A HASH SUM
 
-if usehash:
+if hashaction in ["add", "auto"]:
     texthash = hashlib.sha1(text).digest()
     text += texthash
 
@@ -223,7 +224,9 @@ if usehash:
 ################ DON'T LET USER TO USE TOO SHORT KEY
 
 if len(key) < (len(text)):
-    print("the key must have the text's length or be longer")
+    print("The key must have the text's length or be longer")
+    if hashaction == "auto" and len(key) >= (len(text)-20):
+        print("If you're decrypting data, try to use `-c check` option")
     exit()
 
 
@@ -239,15 +242,30 @@ result = bxor(text, key)
 # the hash sum of the text, excluding the last 20 bytes
 # takes last 20 bytes of text.
 
-if usehash:
-    resulthash = hashlib.sha1(result[0:-40]).digest()
+if hashaction:
+    if hashaction == "check":
+        hashplace = result[-20:]
+        resultbody = result[0:-20]
+    elif hashaction == "auto":
+        hashplace = result[-40:-20]
+        resultbody = result[0:-40]
+
+    if hashaction != "add":
+        resulthash = hashlib.sha1(resultbody).digest()
 
     print("================")
-    if resulthash == result[-40:-20]:
+
+    if hashaction != "add" and resulthash == hashplace:
         print("The hash sum is ok")
-        result = result[0:-40]
+        result = resultbody
+
+    elif hashaction == "check":
+        print("The hash sum is wrong!")
+
+    elif hashaction == "add":
+        print("A hash sum has been added")
     else:
-        print("The hash sum was added/wrong")
+        print("A hash sum was added/wrong")
 
 
 
@@ -267,7 +285,7 @@ if omode == "auto": # settings guessing
 if omode == "b64": # convert encrypted result to base64
     result = base64.b64encode(result)
 
-if not outfile and not (infile and keysource and not usehash):
+if not outfile and not (infile and keysource and not hashaction):
     print("================\n") # separator
 
 out(result)

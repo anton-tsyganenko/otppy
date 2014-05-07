@@ -10,7 +10,7 @@ one-time pad, written with python
 `-k folder`, `--keys-folder=folder` - get a key from the folder  
 `-I mode`, `--input-mode=mode` - input mode (can be `b64` - base64 data, `bin` or `auto`)  
 `-O mode`, `--output-mode=mode` - output mode (can be `b64`, `bin` or `auto`)  
-`-n`, `--no-hash` - do not use hash sum (not recommended, see "also" section)  
+`-c action`, `--hash=action` - use hash sum (`check`- when you decrypt a message or `add` - when you encrypt a message, `no` - don't use (not recommended) or `auto` (by default))  
 `-g`, `--gen-keys` - generate keys  
 `-K`, `--key-action action` - action to do with used key (`leave`, `delete` or `rename` to mark as used)  
 
@@ -34,9 +34,9 @@ encryption/decryption with manual text and key input:
 
     ./otp.py
 
-encryption/decryption with manual text and key input without using a hashsum:
+encryption/decryption with manual text and adding a hashsum:
 
-    ./otp.py -n
+    ./otp.py -c add
 
 encryption/decryption with manual text input and getting the key from the folder:
 
