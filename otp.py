@@ -240,11 +240,11 @@ del text, key
 
 if hashaction:
     if hashaction == "check":
-        hashplace = result[-20:]
+        hashplace = memoryview(result)[-20:]
         resultbody = memoryview(result)[0:-20]
     elif hashaction == "auto":
         hashplace = memoryview(result)[-40:-20]
-        resultbody = result[0:-40]
+        resultbody = memoryview(result)[0:-40]
 
     if hashaction != "add":
         resulthash = hashlib.sha1(resultbody).digest()
@@ -268,14 +268,14 @@ if hashaction:
 ################ FINAL
 
 if omode == "auto": # settings guessing
-    try:
-        result.decode("utf-8")
-        omode = "bin"
-    except:
-        if not outfile:
-            omode = "b64"
-        else:
+    if not outfile:
+        try:
+            result.decode("utf-8")
             omode = "bin"
+        except:
+            omode = "b64"
+    else:
+        omode = "bin"
 
 
 if omode == "b64": # convert encrypted result to base64
