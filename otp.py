@@ -43,7 +43,7 @@ def out(output):
         with open(outfile, "bw") as file:
             file.write(output)
     else:
-        print(output.decode("utf-8"))
+        print(bytes(output).decode("utf-8"))
 
 
 
