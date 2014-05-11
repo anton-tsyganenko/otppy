@@ -43,7 +43,7 @@ def out(output):
         with open(outfile, "bw") as file:
             file.write(output)
     else:
-        print(bytes(output).decode("utf-8"))
+        print(output.decode("utf-8"))
 
 
 
@@ -133,10 +133,7 @@ if genkey:
         out(result)
 
     else: # folder with binary key files
-        try:
-            os.makedirs(outfile)
-        except:
-            pass
+        os.makedirs(outfile)
         for i in range(number):
             with open(outfile + os.sep + str(i), "xb") as f:
                 f.write(os.urandom(length))
@@ -178,8 +175,8 @@ if imode in ["auto", "b64"]:
 
 ################ KEY INPUT
 
-if keysource: # use folder with keys
-    if os.path.isdir(keysource):
+if keysource: # use folder with keys or a keyfile
+    if os.path.isdir(keysource): # folder with keys
         fileslist = os.listdir(keysource)
 
         for i in fileslist[:]: # don't use used keys
@@ -199,9 +196,12 @@ if keysource: # use folder with keys
         keyfile = keysource + os.sep + max(fileslist, key=int)
         with open(keyfile, "br") as f:
             key = f.read(len(text)+hashlen)
-    else:
+
+        keyfromfolder = True # see FINAL
+    else: # a keyfile
         with open(keysource, "br") as f:
             key = f.read(len(text)+hashlen)
+        keyfromfolder = False
 
 else: # manually input the key
     key = base64.b64decode(input("enter the key > "))
@@ -211,8 +211,7 @@ else: # manually input the key
 ################ ADD A HASH SUM
 
 if hashaction in ["add", "auto"]:
-    texthash = hashlib.sha1(text).digest()
-    text += texthash
+    text += hashlib.sha1(text).digest()
 
 
 
@@ -235,14 +234,12 @@ del text, key
 
 ################ CHECK A HASH SUM
 
-# the hash sum of the text, excluding the last 20 bytes
-# takes last 20 bytes of text.
-
-if hashaction:
+if hashaction != "no":
     if hashaction == "check":
         hashplace = memoryview(result)[-20:]
         resultbody = memoryview(result)[0:-20]
     elif hashaction == "auto":
+        # in auto mode the program adds new hash sum(see ADD A HASH SUM)
         hashplace = memoryview(result)[-40:-20]
         resultbody = memoryview(result)[0:-40]
 
@@ -253,15 +250,19 @@ if hashaction:
 
     if hashaction != "add" and resulthash == hashplace:
         print("The hash sum is ok")
-        result = resultbody
+        result = bytes(resultbody)
 
     elif hashaction == "check":
         print("The hash sum is wrong!")
+        result = bytes(resultbody)
 
     elif hashaction == "add":
         print("A hash sum has been added")
     else:
         print("A hash sum was added/wrong")
+
+    if hashaction != "add":
+        del resultbody, hashplace
 
 
 
@@ -286,7 +287,7 @@ if not outfile and not (infile and keysource and not hashaction):
 
 out(result)
 
-if keysource: # delete or rename used key
+if keysource and keyfromfolder: # delete or rename used key
     if keyaction == "rename":
         os.rename(keyfile, keyfile + "_used")
     elif keyaction == "delete":
