@@ -173,6 +173,7 @@ if imode in ["auto", "b64"]:
 # there are some other settings guessing code in FINAL.
 
 
+
 ################ KEY INPUT
 
 if keysource: # use folder with keys or a keyfile
@@ -198,13 +199,18 @@ if keysource: # use folder with keys or a keyfile
             key = f.read(len(text)+hashlen)
 
         keyfromfolder = True # see FINAL
+
+        del fileslist
     else: # a keyfile
         with open(keysource, "br") as f:
             key = f.read(len(text)+hashlen)
         keyfromfolder = False
 
+    del keysource, hashlen
+
 else: # manually input the key
     key = base64.b64decode(input("enter the key > "))
+    keyfromfolder = False
 
 
 
@@ -287,7 +293,7 @@ if not outfile and not (infile and keysource and not hashaction):
 
 out(result)
 
-if keysource and keyfromfolder: # delete or rename used key
+if keyfromfolder: # delete or rename used key
     if keyaction == "rename":
         os.rename(keyfile, keyfile + "_used")
     elif keyaction == "delete":
