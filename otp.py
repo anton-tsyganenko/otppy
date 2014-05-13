@@ -285,7 +285,7 @@ if omode == "auto": # settings guessing
 if omode == "b64": # convert encrypted result to base64
     result = base64.b64encode(result)
 
-if not outfile and not (infile and keysource and not hashaction):
+if not (outfile or infile and keyfromfolder and hashaction == "no"):
     print("================\n") # separator
 
 out(result)
