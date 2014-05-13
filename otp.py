@@ -163,11 +163,8 @@ if infile:
 if imode in ["auto", "b64"]:
     try: # try to decode base64
         text = base64.b64decode(text.decode("utf-8"), validate=True)
-        if omode == "auto": # if user inputs base64 data,
-            omode = "bin"   # probably he wants to get a text
-    except:           # if user inputs not base64 data,
-        if not outfile:
-            omode = "b64" # probably he wants to get base64 code
+    except:
+        pass
 
 
 # there are some other settings guessing code in FINAL.
