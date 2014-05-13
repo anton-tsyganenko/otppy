@@ -70,8 +70,8 @@ parser.add_option("-K", "--key-action",
                   dest = "keyaction",
                   choices = ["leave", "delete", "rename"],
                   default = "rename",
-                  help = "action to do with used key, can be " +
-                       "`leave`, `delete` or `rename`",
+                  help = ("action to do with used key, can be "
+                          "`leave`, `delete` or `rename`"),
                   metavar = "ACTION")
 
 parser.add_option("-I", "--input-mode",
@@ -182,14 +182,14 @@ if keysource: # use folder with keys or a keyfile
                 fileslist.remove(i)
 
         if len(fileslist) == 0:
-            print("================\n" +
-                  "NO KEYS IN {kf}!".format(kf=keysource))
+            print("================\n"
+                  "NO KEYS IN {ks}!".format(ks=keysource))
             exit()
 
         if len(fileslist) <= notenoughkeys:
-            print("================")
-            print(("WARNING! only {k} keys left, and one of them " +
-                  "will be used now.").format(k=len(fileslist)))
+            print("================\n"
+                  "WARNING! only {k} keys left, and one of them "
+                  "will be used now.".format(k=len(fileslist)))
 
         keyfile = keysource + os.sep + max(fileslist, key=int)
         with open(keyfile, "br") as f:
