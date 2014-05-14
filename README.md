@@ -12,7 +12,7 @@ one-time pad, written with python
 `-O mode`, `--output-mode=mode` - output mode (can be `b64`, `bin` or `auto`)  
 `-c action`, `--hash=action` - use hash sum (`check`- when you decrypt a message or `add` - when you encrypt a message, `no` - don't use (not recommended) or `auto` (by default))  
 `-g`, `--gen-keys` - generate keys  
-`-K`, `--key-action action` - action to do with used key (`leave`, `delete` or `rename` to mark as used)  
+`-K`, `--key-action action` - action to do with used key (`leave`, `delete`, `shred` (secure delete), or `rename` to mark as used)  
 
 ##getting started
 

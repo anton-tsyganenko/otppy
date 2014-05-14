@@ -24,6 +24,7 @@ import os
 import optparse
 import hashlib
 import base64
+import shred
 
 notenoughkeys = 5 # for warning (see KEY INPUT)
 
@@ -67,10 +68,10 @@ parser.add_option("-k", "--keys-folder",
 
 parser.add_option("-K", "--key-action",
                   dest = "keyaction",
-                  choices = ["leave", "delete", "rename"],
+                  choices = ["leave", "delete", "rename", "shred"],
                   default = "rename",
                   help = ("action to do with used key, can be "
-                          "`leave`, `delete` or `rename`"),
+                          "`leave`, `rename`, `delete` or `shred`"),
                   metavar = "ACTION")
 
 parser.add_option("-I", "--input-mode",
@@ -291,3 +292,5 @@ if keyfromfolder: # delete or rename used key
         os.rename(keyfile, keyfile + "_used")
     elif keyaction == "delete":
         os.remove(keyfile)
+    elif keyaction == "shred":
+        shred.shred(keyfile)
