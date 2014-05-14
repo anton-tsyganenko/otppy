@@ -162,7 +162,7 @@ if infile:
 if imode in ["auto", "b64"]:
     try: # try to decode base64
         text = base64.b64decode(text.decode("utf-8"), validate=True)
-    except:
+    except base64.binascii.Error:
         if imode == "b64":
             print("Cannot decode base64!")
             exit()
@@ -277,7 +277,7 @@ if omode == "auto": # settings guessing
         try:
             result.decode("utf-8")
             omode = "bin"
-        except:
+        except UnicodeDecodeError:
             omode = "b64"
     else:
         omode = "bin"
