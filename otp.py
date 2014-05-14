@@ -21,7 +21,6 @@
 # THE SOFTWARE.
 
 import os
-import sys
 import optparse
 import hashlib
 import base64
@@ -40,8 +39,8 @@ def bxor(b1, b2): # use xor for bytes
 
 def out(output):
     if outfile: # output to a file
-        with open(outfile, "bw") as file:
-            file.write(output)
+        with open(outfile, "bw") as ofile:
+            ofile.write(output)
     else:
         print(output.decode("utf-8"))
 
@@ -58,7 +57,7 @@ parser.add_option("-o", "--output-file",
 
 parser.add_option("-i", "--input-file",
                   dest = "infile",
-                  help = "write output to FILE",
+                  help = "get data from FILE",
                   metavar = "FILE")
 
 parser.add_option("-k", "--keys-folder",
@@ -77,7 +76,7 @@ parser.add_option("-K", "--key-action",
 parser.add_option("-I", "--input-mode",
                   dest = "imode",
                   default = "auto",
-                  help = "input mode, can be `bin` or `b64`",
+                  help = "input mode, can be `bin`, `b64` or `auto`",
                   choices = ["bin", "b64", "auto"],
                   metavar = "MODE")
 
@@ -85,7 +84,7 @@ parser.add_option("-O", "--output-mode",
                   dest = "omode",
                   default = "auto",
                   choices = ["bin", "b64", "auto"],
-                  help = "output mode, can be `bin` or `b64`",
+                  help = "output mode, can be `bin`, `b64` or `auto`",
                   metavar = "MODE")
 
 parser.add_option("-g", "--gen-keys",
@@ -133,7 +132,7 @@ if genkey:
         out(result)
 
     else: # folder with binary key files
-        os.makedirs(outfile)
+        os.makedirs(outfile, exist_ok=True)
         for i in range(number):
             with open(outfile + os.sep + str(i), "xb") as f:
                 f.write(os.urandom(length))
@@ -145,8 +144,8 @@ if genkey:
 ################ TEXT INPUT
 
 if infile: # from a file
-    with open(infile, "rb") as file:
-        text = file.read()
+    with open(infile, "rb") as tfile:
+        text = tfile.read()
 
 else: # direct input
     text = bytes(input("enter the text > "), "utf-8")
@@ -164,7 +163,9 @@ if imode in ["auto", "b64"]:
     try: # try to decode base64
         text = base64.b64decode(text.decode("utf-8"), validate=True)
     except:
-        pass
+        if imode == "b64":
+            print("Cannot decode base64!")
+            exit()
 
 
 # there are some other settings guessing code in FINAL.
@@ -178,7 +179,7 @@ if keysource: # use folder with keys or a keyfile
         fileslist = os.listdir(keysource)
 
         for i in fileslist[:]: # don't use used keys
-            if "_used" in i:
+            if i.endswith("_used"):
                 fileslist.remove(i)
 
         if len(fileslist) == 0:
