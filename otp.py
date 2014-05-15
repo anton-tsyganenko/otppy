@@ -26,7 +26,7 @@ import hashlib
 import base64
 import shred
 
-notenoughkeys = 5 # for warning (see KEY INPUT)
+not_enough_keys = 5 # for warning (see KEY INPUT)
 
 
 
@@ -39,8 +39,8 @@ def bxor(b1, b2): # use xor for bytes
     return bytes(result)
 
 def out(output):
-    if outfile: # output to a file
-        with open(outfile, "bw") as ofile:
+    if output_file: # output to a file
+        with open(output_file, "bw") as ofile:
             ofile.write(output)
     else:
         print(output.decode())
@@ -52,22 +52,22 @@ def out(output):
 parser = optparse.OptionParser()
 
 parser.add_option("-o", "--output-file",
-                  dest = "outfile",
+                  dest = "output_file",
                   help = "write output to FILE",
                   metavar = "FILE")
 
 parser.add_option("-i", "--input-file",
-                  dest = "infile",
+                  dest = "input_file",
                   help = "get data from FILE",
                   metavar = "FILE")
 
 parser.add_option("-k", "--keys-folder",
-                  dest = "keysource",
+                  dest = "key_source",
                   help = "get a key from FOLDER",
                   metavar = "FOLDER")
 
 parser.add_option("-K", "--key-action",
-                  dest = "keyaction",
+                  dest = "key_action",
                   choices = ["leave", "delete", "rename", "shred"],
                   default = "rename",
                   help = ("action to do with used key, can be "
@@ -75,27 +75,27 @@ parser.add_option("-K", "--key-action",
                   metavar = "ACTION")
 
 parser.add_option("-I", "--input-mode",
-                  dest = "imode",
+                  dest = "input_mode",
                   default = "auto",
                   help = "input mode, can be `bin`, `b64` or `auto`",
                   choices = ["bin", "b64", "auto"],
                   metavar = "MODE")
 
 parser.add_option("-O", "--output-mode",
-                  dest = "omode",
+                  dest = "output_mode",
                   default = "auto",
                   choices = ["bin", "b64", "auto"],
                   help = "output mode, can be `bin`, `b64` or `auto`",
                   metavar = "MODE")
 
 parser.add_option("-g", "--gen-keys",
-                  dest = "genkey",
+                  dest = "key_generation",
                   default = False,
                   action = "store_true",
                   help = "generate keys")
 
 parser.add_option("-c", "--hash-action",
-                  dest = "hashaction",
+                  dest = "hash_action",
                   choices = ["no", "auto", "add", "check"],
                   default = "auto",
                   metavar = "ACTION",
@@ -104,38 +104,39 @@ parser.add_option("-c", "--hash-action",
 
 (options, args) = parser.parse_args()
 
-infile = options.infile
-outfile = options.outfile
-keysource = options.keysource
-keyaction = options.keyaction
-imode = options.imode
-omode = options.omode
-genkey = options.genkey
-hashaction = options.hashaction
+input_file = options.input_file
+output_file = options.output_file
+key_source = options.key_source
+key_action = options.key_action
+input_mode = options.input_mode
+output_mode = options.output_mode
+key_generation = options.key_generation
+hash_action = options.hash_action
 
-if hashaction in ["auto", "add"]:
-    hashlen = 20
+if hash_action in ["auto", "add"]:
+    hash_length = 20
 else:
-    hashlen = 0
+    hash_length = 0
 
 
 
 ################ KEY GENERATION
 
-if genkey:
+if key_generation:
     number = int(input("number of keys > "))
     length = int(input("key length > "))
 
-    if omode == "b64" or not outfile: # text with keys in base64
+    if output_mode == "b64" or not output_file:
+        # text with keys in base64
         result = b""
         for i in range(number):
             result += base64.b64encode(os.urandom(length)) + b"\n"
         out(result)
 
     else: # folder with binary key files
-        os.makedirs(outfile, exist_ok=True)
+        os.makedirs(output_file, exist_ok=True)
         for i in range(number):
-            with open(outfile + os.sep + str(i), "xb") as f:
+            with open(output_file + os.sep + str(i), "xb") as f:
                 f.write(os.urandom(length))
 
     exit()
@@ -144,24 +145,22 @@ if genkey:
 
 ################ TEXT INPUT
 
-if infile: # from a file
-    with open(infile, "rb") as tfile:
+if input_file: # from a file
+    with open(input_file, "rb") as tfile:
         text = tfile.read()
+
+    if input_mode == "auto":
+        input_mode = "bin"
 
 else: # direct input
     text = bytes(input("enter the text > "), "utf-8")
 
 
-if infile:
-    if imode == "auto":
-        imode = "bin"
-
-
-if imode in ["auto", "b64"]:
+if input_mode in ["auto", "b64"]:
     try: # try to decode base64
         text = base64.b64decode(text.decode(), validate=True)
     except base64.binascii.Error:
-        if imode == "b64":
+        if input_mode == "b64":
             print("Cannot decode base64!")
             exit()
 
@@ -169,47 +168,47 @@ if imode in ["auto", "b64"]:
 
 ################ KEY INPUT
 
-if keysource: # use folder with keys or a keyfile
-    if os.path.isdir(keysource): # folder with keys
-        fileslist = os.listdir(keysource)
+if key_source: # use folder with keys or a keyfile
+    if os.path.isdir(key_source): # folder with keys
+        files_list = os.listdir(key_source)
 
-        for i in fileslist[:]: # don't use used keys
+        for i in files_list[:]: # don't use used keys
             if i.endswith("_used"):
-                fileslist.remove(i)
+                files_list.remove(i)
 
-        if len(fileslist) == 0:
+        if len(files_list) == 0:
             print("================\n"
-                  "NO KEYS IN {ks}!".format(ks=keysource))
+                  "NO KEYS IN {ks}!".format(ks=key_source))
             exit()
 
-        if len(fileslist) <= notenoughkeys:
+        if len(files_list) <= not_enough_keys:
             print("================\n"
                   "WARNING! only {k} keys left, and one of them "
-                  "will be used now.".format(k=len(fileslist)))
+                  "will be used now.".format(k=len(files_list)))
 
-        keyfile = keysource + os.sep + max(fileslist, key=int)
+        keyfile = key_source + os.sep + max(files_list, key=int)
         with open(keyfile, "br") as f:
-            key = f.read(len(text)+hashlen)
+            key = f.read(len(text)+hash_length)
 
-        keyfromfolder = True # see FINAL
+        key_from_folder = True # see FINAL
 
-        del fileslist
+        del files_list
     else: # a keyfile
-        with open(keysource, "br") as f:
-            key = f.read(len(text)+hashlen)
-        keyfromfolder = False
+        with open(key_source, "br") as f:
+            key = f.read(len(text)+hash_length)
+        key_from_folder = False
 
-    del keysource, hashlen
+    del key_source, hash_length
 
 else: # manually input the key
     key = base64.b64decode(input("enter the key > "))
-    keyfromfolder = False
+    key_from_folder = False
 
 
 
 ################ ADD A HASH SUM
 
-if hashaction in ["add", "auto"]:
+if hash_action in ["add", "auto"]:
     text += hashlib.sha1(text).digest()
 
 
@@ -218,7 +217,7 @@ if hashaction in ["add", "auto"]:
 
 if len(key) < (len(text)):
     print("The key must have the text's length or be longer")
-    if hashaction == "auto" and len(key) >= (len(text)-20):
+    if hash_action == "auto" and len(key) >= (len(text)-20):
         print("If you're decrypting data, try to use `-c check` option")
     exit()
 
@@ -233,64 +232,65 @@ del text, key
 
 ################ CHECK A HASH SUM
 
-if hashaction != "no":
-    if hashaction == "check":
-        hashplace = memoryview(result)[-20:]
-        resultbody = memoryview(result)[0:-20]
-    elif hashaction == "auto":
+if hash_action != "no":
+    if hash_action == "check":
+        hash_place = memoryview(result)[-20:]
+        body = memoryview(result)[0:-20]
+    elif hash_action == "auto":
         # in auto mode the program adds new hash sum(see ADD A HASH SUM)
-        hashplace = memoryview(result)[-40:-20]
-        resultbody = memoryview(result)[0:-40]
+        hash_place = memoryview(result)[-40:-20]
+        body = memoryview(result)[0:-40]
 
-    if hashaction != "add":
-        resulthash = hashlib.sha1(resultbody).digest()
+    if hash_action != "add":
+        result_hash = hashlib.sha1(body).digest()
 
     print("================")
 
-    if hashaction != "add" and resulthash == hashplace:
+    if hash_action != "add" and result_hash == hash_place:
         print("The hash sum is ok")
-        result = bytes(resultbody)
+        result = bytes(body)
 
-    elif hashaction == "check":
+    elif hash_action == "check":
         print("The hash sum is wrong!")
-        result = bytes(resultbody)
+        result = bytes(body)
 
-    elif hashaction == "add":
+    elif hash_action == "add":
         print("A hash sum has been added")
     else:
         print("A hash sum was added/wrong")
 
-    if hashaction != "add":
-        del resultbody, hashplace
+    if hash_action != "add":
+        del body, hash_place
 
 
 
 ################ FINAL
 
-if omode == "auto": # settings guessing
-    if not outfile:
+if output_mode == "auto": # settings guessing
+    if not output_file:
         try:
             result.decode()
         except UnicodeDecodeError:
-            omode = "b64"
+            output_mode = "b64"
         else:
-            omode = "bin"
+            output_mode = "bin"
     else:
-        omode = "bin"
+        if output_mode == "auto":
+            output_mode = "bin"
 
 
-if omode == "b64": # convert encrypted result to base64
+if output_mode == "b64": # convert encrypted result to base64
     result = base64.b64encode(result)
 
-if not (outfile or infile and keyfromfolder and hashaction == "no"):
+if not (output_file or input_file and key_from_folder and hash_action == "no"):
     print("================\n") # separator
 
 out(result)
 
-if keyfromfolder: # delete or rename used key
-    if keyaction == "rename":
+if key_from_folder: # delete or rename used key
+    if key_action == "rename":
         os.rename(keyfile, keyfile + "_used")
-    elif keyaction == "delete":
+    elif key_action == "delete":
         os.remove(keyfile)
-    elif keyaction == "shred":
+    elif key_action == "shred":
         shred.shred(keyfile)
