@@ -52,9 +52,10 @@ file decryption with getting the key from the folder:
 * It's highly recommended to generate 2 sets of keys: for outgoing messages and for incoming messages. Avoid simultaneous usage of the same key - it is insecure, however may happen if you and your interlocutor, both send messages at the same time.
 * If a malefactor knows a part of a message or key, he can replace the part of message with any other text. Use hash sums to prevent it. Note, that using hash sums cannot protect you if the malefactor knows the full text or key.
 * If you see message "The hash sum was added/wrong" when you encrypt you data, it means, thay the hash sum have been added, so everything is ok, but if you see this message when you decrypt data, it means, that the message have been modifyed.
-* If you encrypt files, make sure, that file size, multiplied by 3 is less than free RAM
+* If you encrypt files, make sure, that file size, multiplied by 3 is less than free RAM. You can also save some time setting right hash action option.
 * The program can be used if you have 2 channels, which both can be wiretapped. In this case you should send the keys set using one channel and messages using another one. To decrypt messages, both channels must be wiretapped.
 * The security of the cipher depends on the way of keys transmission. It's recommended to transmit keys on a face-to-face, meeting using a flash storage or a CD. Also you can encrypt keys using truecrypt, encrypted zip, etc.
 * Note, that some symbols, like Cyrillic letters, can use more than 1 byte for each symbol.
+* Shredding a used key sometimes may not work correct. Read the manual for Gnu Shred.
 * You can get more information about the one-time pad cipher [on wikipedia](http://en.wikipedia.org/wiki/One-time_pad)
 * Should you detect a bug, have some questions or want to make a suggestion, feel free to contact me using [email](mailto:anton-tsyganenko@yandex.ru) or [jabber](xmpp:antontsyganenko@jabber.ru).
