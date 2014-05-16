@@ -94,7 +94,7 @@ parser.add_option("-g", "--gen-keys",
                   action = "store_true",
                   help = "generate keys")
 
-parser.add_option("-c", "--hash-action",
+parser.add_option("-c", "--hash",
                   dest = "hash_action",
                   choices = ["no", "auto", "add", "check"],
                   default = "auto",
