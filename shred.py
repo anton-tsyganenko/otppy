@@ -23,6 +23,7 @@
 import os
 import sys
 
+
 def shred(file_name, count=25):
     file_length = os.stat(file_name).st_size
     for _ in range(count):
@@ -31,6 +32,7 @@ def shred(file_name, count=25):
     with open(file_name, 'wb') as f:
         f.write(bytes(file_length))
     os.remove(file_name)
+
 
 if __name__ == "__main__":
     shred(sys.argv[1])
