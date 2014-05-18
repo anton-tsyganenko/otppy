@@ -70,7 +70,7 @@ parser.add_option("-K", "--key-action",
                   choices=["leave", "delete", "rename", "shred"],
                   default="rename",
                   help=("action to do with used key, can be "
-                          "`leave`, `rename`, `delete` or `shred`"),
+                        "`leave`, `rename`, `delete` or `shred`"),
                   metavar="ACTION")
 
 parser.add_option("-I", "--input-mode",
