@@ -25,6 +25,7 @@ import optparse
 import hashlib
 import base64
 import shred
+import gzip
 
 NOT_ENOUGH_KEYS = 5          # for warning (see KEY INPUT)
 
@@ -100,6 +101,13 @@ parser.add_option("-c", "--hash",
                   metavar="ACTION",
                   help="action to do with hash sum")
 
+parser.add_option("-z", "--gzip",
+                  dest="gzip_action",
+                  choices=["compress", "decompress", "no"],
+                  default="no",
+                  metavar="ACTION",
+                  help="(de)compress data using gzip")
+
 
 (options, args) = parser.parse_args()
 
@@ -111,6 +119,7 @@ input_mode = options.input_mode
 output_mode = options.output_mode
 key_generation = options.key_generation
 hash_action = options.hash_action
+gzip_action = options.gzip_action
 
 if hash_action in ["auto", "add"]:
     hash_length = 20
@@ -160,6 +169,10 @@ if input_mode in ["auto", "b64"]:
         if input_mode == "b64":
             print("Cannot decode base64!")
             exit()
+
+
+if gzip_action == "compress":
+    text = gzip.compress(text)
 
 
 # KEY INPUT
@@ -256,6 +269,9 @@ if hash_action != "no":
 
 
 # FINAL
+
+if gzip_action == "decompress":
+    result = gzip.decompress(result)
 
 if output_mode == "auto":    # settings guessing
     if not output_file:

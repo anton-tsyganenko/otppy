@@ -11,6 +11,7 @@ one-time pad, written with python
 `-I mode`, `--input-mode=mode` - input mode (can be `b64` - base64 data, `bin` or `auto`)  
 `-O mode`, `--output-mode=mode` - output mode (can be `b64`, `bin` or `auto`)  
 `-c action`, `--hash=action` - use hash sum (`check`- when you decrypt a message or `add` - when you encrypt a message, `no` - don't use (not recommended) or `auto` (by default))  
+`-z action`, `--gzip=action` - `compress` or `decompress` data using gzip. `no` - by default.  
 `-g`, `--gen-keys` - generate keys  
 `-K`, `--key-action action` - action to do with used key (`leave`, `delete`, `shred` (secure delete), or `rename` to mark as used)  
 
@@ -57,5 +58,6 @@ file decryption with getting the key from the folder:
 * The security of the cipher depends on the way of keys transmission. It's recommended to transmit keys on a face-to-face, meeting using a flash storage or a CD. Also you can encrypt keys using truecrypt, encrypted zip, etc.
 * Note, that some symbols, like Cyrillic letters, can use more than 1 byte for each symbol.
 * Shredding a used key sometimes may not work correct. Read the manual for Gnu Shred.
+* You can compress text data to minimize used storage, but you should let your interlocutor know if you would like to use it.
 * You can get more information about the one-time pad cipher [on wikipedia](http://en.wikipedia.org/wiki/One-time_pad)
 * Should you detect a bug, have some questions or want to make a suggestion, feel free to contact me using [email](mailto:anton-tsyganenko@yandex.ru) or [jabber](xmpp:antontsyganenko@jabber.ru).
