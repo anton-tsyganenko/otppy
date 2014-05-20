@@ -277,6 +277,7 @@ if hash_action != "no":
 
 if gzip_action == "decompress" or (result[0:2] == b'\x1f\x8b'
                                    and gzip_action == "auto"):
+    # gzip data starts with 1F 8B
     result = gzip.decompress(result)
     print("decompressed result")
 
