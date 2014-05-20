@@ -103,8 +103,9 @@ parser.add_option("-c", "--hash",
 
 parser.add_option("-z", "--gzip",
                   dest="gzip_action",
-                  choices=["compress", "decompress", "no"],
-                  default="no",
+                  choices=["compress", "c", "decompress", "d", "no", "auto"],
+                  # "auto" is like "no", but decompress gzip if found.
+                  default="auto",
                   metavar="ACTION",
                   help="(de)compress data using gzip")
 
@@ -126,6 +127,10 @@ if hash_action in ["auto", "add"]:
 else:
     hash_length = 0
 
+if gzip_action == "c":
+    gzip_action = "compress":
+elif gzip_action == "d":
+    gzip_action = "decompress":
 
 # KEY GENERATION
 
@@ -270,8 +275,10 @@ if hash_action != "no":
 
 # FINAL
 
-if gzip_action == "decompress":
+if gzip_action == "decompress" or (result[0:2] == b'\x1f\x8b'
+                                   and gzip_action == "auto"):
     result = gzip.decompress(result)
+    print("decompressed result")
 
 if output_mode == "auto":    # settings guessing
     if not output_file:
