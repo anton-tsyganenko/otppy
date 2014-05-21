@@ -128,9 +128,9 @@ else:
     hash_length = 0
 
 if gzip_action == "c":
-    gzip_action = "compress":
+    gzip_action = "compress"
 elif gzip_action == "d":
-    gzip_action = "decompress":
+    gzip_action = "decompress"
 
 # KEY GENERATION
 
@@ -278,8 +278,13 @@ if hash_action != "no":
 if gzip_action == "decompress" or (result[0:2] == b'\x1f\x8b'
                                    and gzip_action == "auto"):
     # gzip data starts with 1F 8B
-    result = gzip.decompress(result)
-    print("decompressed result")
+    try:
+        result = gzip.decompress(result)
+    except OSError:
+        if gzip_action == "decompress":
+            print("Cannot decompress gzip!")
+            exit()
+    print("Decompressed result")
 
 if output_mode == "auto":    # settings guessing
     if not output_file:
