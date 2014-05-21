@@ -26,6 +26,7 @@ import hashlib
 import base64
 import shred
 import gzip
+import bz2
 
 NOT_ENOUGH_KEYS = 5          # for warning (see KEY INPUT)
 
@@ -101,13 +102,20 @@ parser.add_option("-c", "--hash",
                   metavar="ACTION",
                   help="action to do with hash sum")
 
-parser.add_option("-z", "--gzip",
-                  dest="gzip_action",
+parser.add_option("-z", "--zip",
+                  dest="compresser_action",
                   choices=["compress", "c", "decompress", "d", "no", "auto"],
                   # "auto" is like "no", but decompress gzip if found.
                   default="auto",
                   metavar="ACTION",
-                  help="(de)compress data using gzip")
+                  help="(de)compress data")
+
+parser.add_option("-a", "--compress-algorithm",
+                  dest="compress_algorithm",
+                  choices=["gzip", "bzip2"],
+                  default="gzip",
+                  metavar="ACTION",
+                  help="compress algorithm")
 
 
 (options, args) = parser.parse_args()
@@ -120,17 +128,23 @@ input_mode = options.input_mode
 output_mode = options.output_mode
 key_generation = options.key_generation
 hash_action = options.hash_action
-gzip_action = options.gzip_action
+compresser_action = options.compresser_action
+compress_algorithm = options.compress_algorithm
 
 if hash_action in ["auto", "add"]:
     hash_length = 20
 else:
     hash_length = 0
 
-if gzip_action == "c":
-    gzip_action = "compress"
-elif gzip_action == "d":
-    gzip_action = "decompress"
+if compresser_action == "c":
+    compresser_action = "compress"
+elif compresser_action == "d":
+    compresser_action = "decompress"
+
+if compress_algorithm == "gzip":
+    compresser = gzip
+elif compress_algorithm == "bzip2":
+    compresser = bz2
 
 # KEY GENERATION
 
@@ -176,8 +190,8 @@ if input_mode in ["auto", "b64"]:
             exit()
 
 
-if gzip_action == "compress":
-    text = gzip.compress(text)
+if compresser_action == "compress":
+    text = compresser.compress(text)
 
 
 # KEY INPUT
@@ -275,14 +289,18 @@ if hash_action != "no":
 
 # FINAL
 
-if gzip_action == "decompress" or (result[0:2] == b'\x1f\x8b'
-                                   and gzip_action == "auto"):
-    # gzip data starts with 1F 8B
+if compresser_action == "decompress" or compresser_action == "auto":
+    # gzip data starts with 1F 8B, bzip - 'BZh'
+    if result[0:3] == b'BZh':
+        compresser = bz2
+    elif result[0:2] == b'\x1f\x8b':
+        compresser = gzip
+
     try:
-        result = gzip.decompress(result)
+        result = compresser.decompress(result)
     except OSError:
-        if gzip_action == "decompress":
-            print("Cannot decompress gzip!")
+        if compresser_action == "decompress":
+            print("Cannot decompress result!")
             exit()
     print("Decompressed result")
 
