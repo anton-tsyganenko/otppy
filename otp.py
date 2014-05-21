@@ -289,7 +289,7 @@ if hash_action != "no":
 
 # FINAL
 
-if compresser_action == "decompress" or compresser_action == "auto":
+if compresser_action in ["decompress", "auto"]:
     # gzip data starts with 1F 8B, bzip - 'BZh'
     if result[0:3] == b'BZh':
         compresser = bz2
@@ -302,7 +302,8 @@ if compresser_action == "decompress" or compresser_action == "auto":
         if compresser_action == "decompress":
             print("Cannot decompress result!")
             exit()
-    print("Decompressed result")
+    else:
+        print("Decompressed result")
 
 if output_mode == "auto":    # settings guessing
     if not output_file:
