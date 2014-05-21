@@ -114,7 +114,7 @@ parser.add_option("-a", "--compress-algorithm",
                   dest="compress_algorithm",
                   choices=["gzip", "bzip2"],
                   default="gzip",
-                  metavar="ACTION",
+                  metavar="ALGORITHM",
                   help="compress algorithm")
 
 
