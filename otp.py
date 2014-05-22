@@ -146,6 +146,9 @@ if compress_algorithm == "gzip":
 elif compress_algorithm == "bzip2":
     compresser = bz2
 
+if compresser_action in ["compress", "decompress"] and hash_action == "auto":
+    hash_action = "no"
+
 # KEY GENERATION
 
 if key_generation:
@@ -254,6 +257,22 @@ result = bxor(text, key)
 del text, key
 
 
+# DETECT COMPRESSED DATA
+
+if compresser_action in ["decompress", "auto"]:
+    # gzip data starts with 1F 8B, bzip - 'BZh'
+    if result[0:3] == b'BZh':
+        compresser = bz2
+    elif result[0:2] == b'\x1f\x8b':
+        compresser = gzip
+
+    if result[0:3] == b'BZh' or result[0:2] == b'\x1f\x8b':
+        if hash_action == "auto":
+            result = result[0:-20]
+        hash_action = "no"
+
+
+
 # CHECK A HASH SUM
 
 if hash_action != "no":
@@ -290,15 +309,9 @@ if hash_action != "no":
 # FINAL
 
 if compresser_action in ["decompress", "auto"]:
-    # gzip data starts with 1F 8B, bzip - 'BZh'
-    if result[0:3] == b'BZh':
-        compresser = bz2
-    elif result[0:2] == b'\x1f\x8b':
-        compresser = gzip
-
     try:
         result = compresser.decompress(result)
-    except OSError:
+    except:
         if compresser_action == "decompress":
             print("Cannot decompress result!")
             exit()
