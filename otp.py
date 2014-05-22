@@ -261,15 +261,19 @@ del text, key
 
 if compresser_action in ["decompress", "auto"]:
     # gzip data starts with 1F 8B, bzip - 'BZh'
+    compressed_detected = False
     if result[0:3] == b'BZh':
         compresser = bz2
+        compressed_detected = True
     elif result[0:2] == b'\x1f\x8b':
         compresser = gzip
+        compressed_detected = True
 
-    if result[0:3] == b'BZh' or result[0:2] == b'\x1f\x8b':
-        if hash_action == "auto":
-            result = result[0:-20]
+    if compressed_detected and hash_action == "auto":
+        result = result[0:-20]
         hash_action = "no"
+
+    del compressed_detected
 
 
 
@@ -317,6 +321,7 @@ if compresser_action in ["decompress", "auto"]:
             exit()
     else:
         print("Decompressed result")
+
 
 if output_mode == "auto":    # settings guessing
     if not output_file:
