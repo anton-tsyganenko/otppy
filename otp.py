@@ -257,37 +257,27 @@ result = bxor(text, key)
 del text, key
 
 
-# DETECT COMPRESSED DATA
+# DETECT COMPRESSED DATA AND DECOMPRESS IT
 
 if compresser_action in ["decompress", "auto"]:
     # gzip data starts with 1F 8B, bzip - 'BZh'
-    compressed_detected = False
     if result[0:3] == b'BZh':
         compresser = bz2
-        compressed_detected = True
     elif result[0:2] == b'\x1f\x8b':
         compresser = gzip
-        compressed_detected = True
-
-    if compressed_detected and hash_action == "auto":
-        hash_backup = result[-20:]
-        result = result[0:-20]
-        hash_action = "no"
 
 
-if compresser_action in ["decompress", "auto"]:
     try:
         result = compresser.decompress(result)
     except:
         if compresser_action == "decompress":
             print("Cannot decompress result!")
             exit()
-        elif compressed_detected:
-            result += hash_backup
-            hash_action = "auto"
-            del compressed_detected, hash_backup
     else:
         print("Decompressed result")
+        result = result[0:-20]
+        hash_action = "no"
+
 
 # CHECK A HASH SUM
 
