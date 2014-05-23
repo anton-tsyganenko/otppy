@@ -261,11 +261,20 @@ del text, key
 
 if compresser_action in ["decompress", "auto"]:
     # gzip data starts with 1F 8B, bzip - 'BZh'
+    compressed_detected = False
+
     if result[0:3] == b'BZh':
         compresser = bz2
+        compressed_detected = True
     elif result[0:2] == b'\x1f\x8b':
         compresser = gzip
+        compressed_detected = True
 
+    hash_backup = result[-20:]
+
+    if compressed_detected and hash_action == "auto":
+        result = result[0:-20]
+        hash_action = "no"
 
     try:
         result = compresser.decompress(result)
@@ -273,10 +282,13 @@ if compresser_action in ["decompress", "auto"]:
         if compresser_action == "decompress":
             print("Cannot decompress result!")
             exit()
+        elif compressed_detected:
+            result += hash_backup
+            hash_action = "auto"
     else:
         print("Decompressed result")
-        result = result[0:-20]
-        hash_action = "no"
+
+    del compressed_detected, hash_backup
 
 
 # CHECK A HASH SUM
