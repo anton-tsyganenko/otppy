@@ -270,12 +270,24 @@ if compresser_action in ["decompress", "auto"]:
         compressed_detected = True
 
     if compressed_detected and hash_action == "auto":
+        hash_backup = result[-20:]
         result = result[0:-20]
         hash_action = "no"
 
-    del compressed_detected
 
-
+if compresser_action in ["decompress", "auto"]:
+    try:
+        result = compresser.decompress(result)
+    except:
+        if compresser_action == "decompress":
+            print("Cannot decompress result!")
+            exit()
+        elif compressed_detected:
+            result += hash_backup
+            hash_action = "auto"
+            del compressed_detected, hash_backup
+    else:
+        print("Decompressed result")
 
 # CHECK A HASH SUM
 
@@ -311,17 +323,6 @@ if hash_action != "no":
 
 
 # FINAL
-
-if compresser_action in ["decompress", "auto"]:
-    try:
-        result = compresser.decompress(result)
-    except:
-        if compresser_action == "decompress":
-            print("Cannot decompress result!")
-            exit()
-    else:
-        print("Decompressed result")
-
 
 if output_mode == "auto":    # settings guessing
     if not output_file:
