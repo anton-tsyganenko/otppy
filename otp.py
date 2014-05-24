@@ -208,13 +208,11 @@ if key_source:                    # use folder with keys or a key_file
                 files_list.remove(i)
 
         if len(files_list) == 0:
-            print("================\n"
-                  "NO KEYS IN {ks}!".format(ks=key_source))
+            print("NO KEYS IN {ks}!".format(ks=key_source))
             exit()
 
         if len(files_list) <= NOT_ENOUGH_KEYS:
-            print("================\n"
-                  "WARNING! only {k} keys left, and one of them "
+            print("WARNING! only {k} keys left, and one of them "
                   "will be used now.".format(k=len(files_list)))
 
         key_file = key_source + os.sep + max(files_list, key=int)
@@ -247,7 +245,8 @@ if hash_action in ["add", "auto"]:
 if len(key) < (len(text)):
     print("The key is too short.")
     if hash_action == "auto" and len(key) >= (len(text)-20):
-        print("If you're decrypting data, try to use `-c check` option")
+        print("If you're decrypting data, try to use `-c check` option "
+              "(or `-z d` if you're using compression)")
     exit()
 
 
@@ -304,8 +303,6 @@ if hash_action != "no":
 
     if hash_action != "add":
         result_hash = hashlib.sha1(body).digest()
-
-    print("================")
 
     if hash_action != "add" and result_hash == hash_place:
         print("The hash sum is ok")
