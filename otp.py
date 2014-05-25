@@ -256,11 +256,11 @@ result = bxor(text, key)
 del text, key
 
 
-# DETECT COMPRESSED DATA AND DECOMPRESS IT
+# DETECT COMPRESSED DATA
 
+compressed_detected = False
 if compresser_action in ["decompress", "auto"]:
     # gzip data starts with 1F 8B, bzip - 'BZh'
-    compressed_detected = False
 
     if result[0:3] == b'BZh':
         compresser = bz2
@@ -269,31 +269,15 @@ if compresser_action in ["decompress", "auto"]:
         compresser = gzip
         compressed_detected = True
 
-    hash_backup = result[-20:]
-
-    if compressed_detected:
+    if compressed_detected and hash_action == "auto":
+        hash_action = "auto_check"
         result = result[0:-20]
-
-        try:
-            result = compresser.decompress(result)
-        except:
-            if compresser_action == "decompress":
-                print("Cannot decompress the result!")
-                exit()
-            else:
-                result += hash_backup
-        else:
-            print("Decompressed result")
-            if hash_action == "auto":
-                hash_action = "no"
-
-    del compressed_detected, hash_backup
 
 
 # CHECK A HASH SUM
 
 if hash_action != "no":
-    if hash_action == "check":
+    if hash_action in ["check", "auto_check"]:
         hash_place = memoryview(result)[-20:]
         body = memoryview(result)[0:-20]
     elif hash_action == "auto":
@@ -312,6 +296,9 @@ if hash_action != "no":
         print("The hash sum is wrong!")
         result = bytes(body)
 
+    elif hash_action == "auto_check":
+        pass
+
     elif hash_action == "add":
         print("A hash sum has been added")
     else:
@@ -319,6 +306,19 @@ if hash_action != "no":
 
     if hash_action != "add":
         del body, hash_place
+
+
+# DECOMPRESS DATA
+
+if compressed_detected:
+    try:
+        result = compresser.decompress(result)
+    except:
+        if compresser_action == "decompress":
+            print("Cannot decompress the result!")
+            exit()
+    else:
+        print("Decompressed result")
 
 
 # FINAL
