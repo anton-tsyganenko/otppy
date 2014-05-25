@@ -271,21 +271,21 @@ if compresser_action in ["decompress", "auto"]:
 
     hash_backup = result[-20:]
 
-    if compressed_detected and hash_action == "auto":
+    if compressed_detected:
         result = result[0:-20]
-        hash_action = "no"
 
-    try:
-        result = compresser.decompress(result)
-    except:
-        if compresser_action == "decompress":
-            print("Cannot decompress result!")
-            exit()
-        elif compressed_detected:
-            result += hash_backup
-            hash_action = "auto"
-    else:
-        print("Decompressed result")
+        try:
+            result = compresser.decompress(result)
+        except:
+            if compresser_action == "decompress":
+                print("Cannot decompress the result!")
+                exit()
+            else:
+                result += hash_backup
+        else:
+            print("Decompressed result")
+            if hash_action == "auto":
+                hash_action = "no"
 
     del compressed_detected, hash_backup
 
