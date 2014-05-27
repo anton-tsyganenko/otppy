@@ -12,7 +12,7 @@ one-time pad, written with python
 `-O mode`, `--output-mode=mode` - output mode (can be `b64`, `bin` or `auto`)  
 `-c action`, `--hash=action` - use hash sum (`check`- when you decrypt a message or `add` - when you encrypt a message, `no` - don't use (not recommended) or `auto` (by default))  
 `-z action`, `--zip=action` - `compress`(`c`) or `decompress`(`d`) data, `no` - don't use or `auto` - don't compress data, but decompress if it looks compressed, by default.  
-`-a algorithm`, `--compress-algorithm=algorithm` - algorithm for compressing data, `gzip` or `bzip2`.  
+`-a algorithm`, `--compress-algorithm=algorithm` - algorithm for compressing data, `gzip` (by default) or `bzip2`.  
 `-g`, `--gen-keys` - generate keys  
 `-K`, `--key-action action` - action to do with used key (`leave`, `delete`, `shred` (secure delete), or `rename` to mark as used)  
 
@@ -35,6 +35,10 @@ generation of a new folder with keys:
 encryption/decryption with manual text and key input:
 
     ./otp.py
+
+encryption with bzip2 compression:
+
+    ./otp.py -z c -a bzip2
 
 encryption/decryption with manual text and adding a hashsum:
 
