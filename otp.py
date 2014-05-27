@@ -147,6 +147,7 @@ elif compress_algorithm == "bzip2":
     compresser = bz2
 
 if compresser_action in ["compress", "decompress"] and hash_action == "auto":
+    # no need to use hash sum if use compression
     hash_action = "no"
 
 # KEY GENERATION
@@ -210,18 +211,20 @@ if key_source:                    # use folder with keys or a key_file
         if len(files_list) == 0:
             print("NO KEYS IN {ks}!".format(ks=key_source))
             exit()
-
         if len(files_list) <= NOT_ENOUGH_KEYS:
             print("WARNING! only {k} keys left, and one of them "
                   "will be used now.".format(k=len(files_list)))
 
+
         key_file = key_source + os.sep + max(files_list, key=int)
+
         with open(key_file, "br") as f:
             key = f.read(len(text)+hash_length)
 
         key_from_folder = True         # see FINAL
 
         del files_list
+
     else:                     # a keyfile
         with open(key_source, "br") as f:
             key = f.read(len(text)+hash_length)
