@@ -215,7 +215,6 @@ if key_source:                    # use folder with keys or a key_file
             print("WARNING! only {k} keys left, and one of them "
                   "will be used now.".format(k=len(files_list)))
 
-
         key_file = key_source + os.sep + max(files_list, key=int)
 
         with open(key_file, "br") as f:
