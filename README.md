@@ -2,7 +2,7 @@ otppy
 =====
 
 one-time pad, written with python  
-**Warning! For perfect secrecy the [cryptographically secure pseudorandom number generator](http://en.wikipedia.org/wiki/Cryptographically_secure_pseudorandom_number_generator) is needed. The included pseudonumber generator is not cryptographically secure.**
+**Warning! For perfect secrecy true random number generator is needed. The included pseudorandom number generator is not secure.**
 
 ##options
 
