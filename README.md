@@ -2,7 +2,6 @@ otppy
 =====
 
 one-time pad, written with python  
-**Warning! For perfect secrecy true random number generator is needed. The included pseudorandom number generator is not secure.**
 
 ##options
 
@@ -14,14 +13,17 @@ one-time pad, written with python
 `-c action`, `--hash=action` - use hash sum (`check`- when you decrypt a message or `add` - when you encrypt a message, `no` - don't use (not recommended) or `auto` (by default))  
 `-z action`, `--zip=action` - `compress`(`c`) or `decompress`(`d`) data, `no` - don't use or `auto` - don't compress data, but decompress if it looks compressed, by default.  
 `-a algorithm`, `--compress-algorithm=algorithm` - algorithm for compressing data, `gzip` (by default) or `bzip2`.  
-`-g`, `--gen-keys` - generate keys  
 `-K`, `--key-action action` - action to do with used key (`leave`, `delete`, `shred` (secure delete), or `rename` to mark as used)  
+
+##key generation
+
+To generate keys, make a folder and put some files there. It's recommended to use your own files, that were not published. Total size of files should be in several times bigger than total keys size. Then use the `./keygen.py <folder> <key_length> <keys_number> [t]` command. After generation files, that were in the folder will be deleted.
 
 ##getting started
 
 If you have already got key sets, skip steps 1 and 2.
 
-1. Generate 2 folders with keys using commands `./otp.py -g -o you_to_interlocutor` and `./otp.py -g -o interlocutor_to_you`. The program will ask you the number of keys, that is equal to the number of messages and keys length, that is equal to the maximum length of each message. Do not make them too short or too long. It's recommended to generate 100-10000 keys with a 100-10000 bytes size according to the situation. If you have a one-way communication, you can only generate one folder with keys or generate small 2 folder.
+1. Generate 2 folders with keys as described in previous paragraph. It's recommended to generate 100-10000 keys with a 100-10000 bytes size according to the situation. If you have a one-way communication, you can only generate one folder with keys or generate small 2 folder.
 2. Send this folders to your recipient using a **secure** channel. You can zip the folder without compression.
 3. To encrypt a message, use the `./otp.py -k you_to_interlocutor` command. Enter your message and press enter. Now the result is ready to be sent to the recipient.
 4. To decrypt a message, use command `./otp.py -k interlocutor_to_you`, then enter the encrypted text.
@@ -29,9 +31,9 @@ If you have already got key sets, skip steps 1 and 2.
 
 ##examples
 
-generation of a new folder with keys:
+generation of a new folder with 10 keys 10 KB size:
 
-    ./otp.py -g -o keys
+    ./keygen.py keys 10000 10
 
 encryption/decryption with manual text and key input:
 

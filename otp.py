@@ -89,12 +89,6 @@ parser.add_option("-O", "--output-mode",
                   help="output mode, can be `bin`, `b64` or `auto`",
                   metavar="MODE")
 
-parser.add_option("-g", "--gen-keys",
-                  dest="key_generation",
-                  default=False,
-                  action="store_true",
-                  help="generate keys")
-
 parser.add_option("-c", "--hash",
                   dest="hash_action",
                   choices=["no", "auto", "add", "check"],
@@ -126,7 +120,6 @@ key_source = options.key_source
 key_action = options.key_action
 input_mode = options.input_mode
 output_mode = options.output_mode
-key_generation = options.key_generation
 hash_action = options.hash_action
 compresser_action = options.compresser_action
 compress_algorithm = options.compress_algorithm
@@ -149,27 +142,6 @@ elif compress_algorithm == "bzip2":
 if compresser_action in ["compress", "decompress"] and hash_action == "auto":
     # no need to use hash sum if use compression
     hash_action = "no"
-
-# KEY GENERATION
-
-if key_generation:
-    number = int(input("number of keys > "))
-    length = int(input("key length > "))
-
-    if output_mode == "b64" or not output_file:
-        # text with keys in base64
-        result = b""
-        for i in range(number):
-            result += base64.b64encode(os.urandom(length)) + b"\n"
-        out(result)
-
-    else:                    # folder with binary key files
-        os.makedirs(output_file, exist_ok=True)
-        for i in range(number):
-            with open(output_file + os.sep + str(i), "xb") as f:
-                f.write(os.urandom(length))
-
-    exit()
 
 
 # TEXT INPUT
