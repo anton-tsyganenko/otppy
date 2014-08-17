@@ -5,6 +5,8 @@ one-time pad, written with python
 
 ##options
 
+Options for otp.py:
+
 `-o file`, `--output-file=file` - redirect output to the file  
 `-i file`, `--input-file=file` - get data from the file  
 `-k folder`, `--keys-folder=folder` - get a key from the folder  
