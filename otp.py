@@ -99,7 +99,7 @@ parser.add_option("-c", "--hash",
 parser.add_option("-z", "--zip",
                   dest="compresser_action",
                   choices=["compress", "c", "decompress", "d", "no", "auto"],
-                  # "auto" is like "no", but decompress gzip if found.
+                  # "auto" only decompress data, if compression found.
                   default="auto",
                   metavar="ACTION",
                   help="(de)compress data")
@@ -291,6 +291,9 @@ if compressed_detected:
         if compresser_action == "decompress":
             print("Cannot decompress the result!")
             exit()
+        else:
+            print("Warning! compressed data detected, "
+                  "but cannot be decompressed")
     else:
         print("Decompressed result")
 
