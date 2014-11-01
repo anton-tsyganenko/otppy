@@ -6,7 +6,7 @@ otppy
 
 опции для запуска файла otp.py:
 
-`-o file`, `--output-file=file` - направить вывод в файл
+`-o file`, `--output-file=file` - направить вывод в файл  
 `-i file`, `--input-file=file` - получить данные из файла  
 `-k folder`, `--keys-folder=folder` - взять ключ из папки  
 `-I mode`, `--input-mode=mode` - режим ввода данных (`b64` - данные в base64, `bin` - бинарные данные или `auto` - автоматически (по умолчанию))  
