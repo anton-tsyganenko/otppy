@@ -19,7 +19,7 @@ Options for otp.py:
 
 ##key generation
 
-To generate keys, make a folder and put some files there. It's recommended to use your own files, that were not published. Total size of files should be in several times bigger than total keys size. Then use the `./keygen.py <folder> <key_length> <keys_number> [t]` command. After generation files, that were in the folder will be deleted.
+To generate keys, make a folder and put some files there. It's recommended to use your own files, that were not published. Total size of files should be in several times bigger than total keys size. Then use the `./keygen.py <folder> <keys_number> <key_length> [t]` command. After generation files, that were in the folder will be deleted.
 
 ##getting started
 

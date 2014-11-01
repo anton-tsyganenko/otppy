@@ -58,8 +58,8 @@ files = []
 for file in fileslist:
     files.append(open(file, "rb"))
 
-key_length = int(sys.argv[2])
-keys_number = int(sys.argv[3])
+keys_number = int(sys.argv[2])
+key_length = int(sys.argv[3])
 
 mixfiles()
 randomdata = randombytes(key_length * keys_number)
