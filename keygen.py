@@ -32,38 +32,51 @@ def bxor(b1, b2):            # use xor for bytes
     return bytes(result)
 
 
-def randombytes(length, files):
-    entropy = b""
-    for file_name in files:
-        with open(path + file_name, "rb") as f:
-            entropy += f.read()
-
+def randombytes(length):
     result = bytes(length)
-    while len(entropy) > length:
-        result = bxor(entropy[0:length], result)
-        entropy = entropy[length:]
-    entropy += bytes(length - len(entropy))
-    result = bxor(entropy, result)
-    del entropy
+    with open("mixed", "rb") as mixed:
+        for i in range(os.stat("mixed").st_size//length):
+            result = bxor(result, mixed.read(length))
     result = bxor(os.urandom(length), result)
     return result
 
-files = os.listdir(sys.argv[1])
-path = sys.argv[1] + os.sep
+def mixfiles():
+    maxlen = max(os.stat(f).st_size for f in fileslist)
+    with open("mixed", "wb") as mixed:
+        for i in range(maxlen//256):
+            for file in files:
+                mixed.write(file.read(256))
+    
+    for file in fileslist:
+        os.remove(file)
+        
+        
+
+os.chdir(sys.argv[1])
+fileslist = os.listdir()
+files = []
+for file in fileslist:
+    files.append(open(file, "rb"))
+
 key_length = int(sys.argv[2])
 keys_number = int(sys.argv[3])
 
-randomdata = randombytes(key_length * keys_number, files)
+mixfiles()
+randomdata = randombytes(key_length * keys_number)
+os.remove("mixed")
+
+keys = []
+for i in range(keys_number):
+    keys.append(randomdata[0:key_length])
+    randomdata = randomdata[key_length:]
+
 
 if "t" not in sys.argv:
-    for f in files:
-        os.remove(path + f)
-
-    for i in range(keys_number):
-        with open(path + str(i), "bw") as f:
-            f.write(randomdata[0:key_length])
-        randomdata = randomdata[key_length:]
+    i = 0
+    for key in keys:
+        with open(str(i), "bw") as f:
+            f.write(key)
+        i += 1
 else:
-    for i in range(keys_number):
-        print(base64.b64encode(randomdata[0:key_length]).decode())
-        randomdata = randomdata[key_length:]
+    for key in keys:
+        print(base64.b64encode(key).decode())
