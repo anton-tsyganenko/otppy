@@ -234,8 +234,8 @@ del text, key
 
 compressed_detected = False
 if compresser_action in ["decompress", "auto"]:
-    # gzip data starts with 1F 8B, bzip - 'BZh'
 
+    # gzip data starts with 1F 8B, bzip - 'BZh'
     if result[0:3] == b'BZh':
         compresser = bz2
         compressed_detected = True
@@ -245,6 +245,7 @@ if compresser_action in ["decompress", "auto"]:
 
     if compressed_detected and hash_action == "auto":
         hash_action = "auto_check"
+	# A hash sum was added, but we don't need it.
         result = result[0:-20]
 
 
@@ -255,7 +256,7 @@ if hash_action != "no":
         hash_place = memoryview(result)[-20:]
         body = memoryview(result)[0:-20]
     elif hash_action == "auto":
-        # in auto mode the program adds new hash sum(see ADD A HASH SUM)
+        # in auto mode the program adds new hash sum (see ADD A HASH SUM)
         hash_place = memoryview(result)[-40:-20]
         body = memoryview(result)[0:-40]
 
