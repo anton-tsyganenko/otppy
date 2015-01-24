@@ -163,7 +163,7 @@ if input_mode in ["auto", "b64"]:
     except base64.binascii.Error:
         if input_mode == "b64":
             print("Cannot decode base64!")
-            exit(0)
+            exit(1)
 
 
 if compresser_action == "compress":
@@ -182,7 +182,7 @@ if key_source:                    # use folder with keys or a key_file
 
         if len(files_list) == 0:
             print("NO KEYS IN {ks}!".format(ks=key_source))
-            exit(0)
+            exit(1)
         if len(files_list) <= NOT_ENOUGH_KEYS:
             print("WARNING! only {k} keys left, and one of them "
                   "will be used now.".format(k=len(files_list)))
@@ -221,7 +221,7 @@ if len(key) < (len(text)):
     if hash_action == "auto" and len(key) >= (len(text)-20):
         print("If you're decrypting data, try to use `-c check` option "
               "(or `-z d` if you're using compression)")
-    exit(0)
+    exit(1)
 
 
 # ENCRYPTION/DECRYPTION
@@ -291,7 +291,7 @@ if compressed_detected:
     except:
         if compresser_action == "decompress":
             print("Cannot decompress the result!")
-            exit(0)
+            exit(1)
         else:
             print("Warning! compressed data detected, "
                   "but cannot be decompressed")
